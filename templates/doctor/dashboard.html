@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Doctor Dashboard - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold text-gradient">
+                <i class="bi bi-speedometer2"></i> Doctor Dashboard
+            </h1>
+            <p class="text-muted">Welcome back, Dr. {{ current_user.doctor.name }}!</p>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        <!-- Today's Appointments -->
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted mb-1">Today's Appointments</p>
+                        <h3 class="fw-bold mb-0">{{ today_appointments }}</h3>
+                        <small class="text-info">
+                            <i class="bi bi-calendar-today"></i> {{ current_date }}
+                        </small>
+                    </div>
+                    <div>
+                        <i class="bi bi-calendar-check text-info"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Patients -->
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted mb-1">Total Patients</p>
+                        <h3 class="fw-bold mb-0">{{ total_patients }}</h3>
+                        <small class="text-success">
+                            <i class="bi bi-people"></i> All Time
+                        </small>
+                    </div>
+                    <div>
+                        <i class="bi bi-people text-success"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completed -->
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted mb-1">Completed</p>
+                        <h3 class="fw-bold mb-0">{{ completed_appointments }}</h3>
+                        <small class="text-success">
+                            <i class="bi bi-check-circle"></i> Treatments
+                        </small>
+                    </div>
+                    <div>
+                        <i class="bi bi-clipboard-check text-success"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming -->
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted mb-1">Upcoming</p>
+                        <h3 class="fw-bold mb-0">{{ upcoming_appointments }}</h3>
+                        <small class="text-warning">
+                            <i class="bi bi-hourglass-split"></i> Scheduled
+                        </small>
+                    </div>
+                    <div>
+                        <i class="bi bi-clock-history text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-gradient text-white">
+                    <h5 class="mb-0"><i class="bi bi-lightning-charge"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <a href="{{ url_for('doctor.view_appointments') }}" class="btn btn-outline-primary w-100 btn-lg">
+                                <i class="bi bi-calendar-event"></i><br>
+                                <span class="mt-2 d-block">My Appointments</span>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('doctor.view_patients') }}" class="btn btn-outline-success w-100 btn-lg">
+                                <i class="bi bi-people-fill"></i><br>
+                                <span class="mt-2 d-block">My Patients</span>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('doctor.manage_availability') }}" class="btn btn-outline-info w-100 btn-lg">
+                                <i class="bi bi-clock-fill"></i><br>
+                                <span class="mt-2 d-block">Manage Schedule</span>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('doctor.profile') }}" class="btn btn-outline-warning w-100 btn-lg">
+                                <i class="bi bi-person-circle"></i><br>
+                                <span class="mt-2 d-block">My Profile</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Today's Schedule -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 pt-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-calendar-day text-primary"></i> Today's Schedule
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if todays_appointments %}
+                        <div class="timeline">
+                            {% for appointment in todays_appointments %}
+                            <div class="timeline-item">
+                                <div class="timeline-marker {% if appointment.status == 'Completed' %}bg-success{% elif appointment.status == 'Cancelled' %}bg-danger{% else %}bg-info{% endif %}"></div>
+                                <div class="timeline-content">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h6 class="mb-1">
+                                                <i class="bi bi-clock"></i> {{ appointment.appointment_time.strftime('%I:%M %p') }}
+                                            </h6>
+                                            <p class="mb-1">
+                                                <strong>{{ appointment.patient.name }}</strong>
+                                                <span class="text-muted"> - {{ appointment.patient.age }} years / {{ appointment.patient.gender }}</span>
+                                            </p>
+                                            <p class="text-muted mb-0 small">
+                                                <i class="bi bi-droplet"></i> {{ appointment.patient.blood_group }} |
+                                                <i class="bi bi-telephone"></i> {{ appointment.patient.contact_number }}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            {% if appointment.status == 'Booked' %}
+                                                <a href="{{ url_for('doctor.view_appointment', appointment_id=appointment.id) }}"
+                                                   class="btn btn-sm btn-primary">
+                                                    <i class="bi bi-eye"></i> View
+                                                </a>
+                                            {% elif appointment.status == 'Completed' %}
+                                                <span class="badge bg-success">
+                                                    <i class="bi bi-check-circle"></i> Completed
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-danger">
+                                                    <i class="bi bi-x-circle"></i> Cancelled
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="{{ url_for('doctor.view_appointments') }}" class="btn btn-primary">
+                                View All Appointments <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="bi bi-calendar-x"></i>
+                            <h5>No Appointments Today</h5>
+                            <p class="text-muted">You have a free schedule for today!</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

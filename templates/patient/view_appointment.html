@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Appointment Details - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('patient.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('patient.my_appointments') }}">My Appointments</a></li>
+                    <li class="breadcrumb-item active">Details</li>
+                </ol>
+            </nav>
+            <h1 class="display-6 fw-bold">
+                <i class="bi bi-calendar-event text-info"></i> Appointment Details
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Appointment Summary -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        {% if appointment.status == 'Booked' %}
+                            <i class="bi bi-hourglass-split text-info" style="font-size: 4rem;"></i>
+                        {% elif appointment.status == 'Completed' %}
+                            <i class="bi bi-check-circle text-success" style="font-size: 4rem;"></i>
+                        {% else %}
+                            <i class="bi bi-x-circle text-danger" style="font-size: 4rem;"></i>
+                        {% endif %}
+                    </div>
+
+                    <h4 class="mb-1">{{ appointment.status }}</h4>
+                    <p class="text-muted mb-3">Appointment #{{ appointment.id }}</p>
+
+                    <div class="alert alert-light mb-3">
+                        <strong>{{ appointment.appointment_date.strftime('%d %B %Y') }}</strong><br>
+                        <span class="text-muted">{{ appointment.appointment_time.strftime('%I:%M %p') }}</span>
+                    </div>
+
+                    {% if appointment.status == 'Booked' %}
+                    <div class="d-grid">
+                        <form method="POST"
+                              action="{{ url_for('patient.cancel_appointment', appointment_id=appointment.id) }}"
+                              onsubmit="return confirm('Are you sure you want to cancel this appointment?');">
+                            <button type="submit" class="btn btn-danger w-100 mb-2">
+                                <i class="bi bi-x-circle"></i> Cancel Appointment
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
+
+                    <a href="{{ url_for('patient.my_appointments') }}" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details -->
+        <div class="col-lg-8">
+            <!-- Doctor Information -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-person-badge text-info"></i> Doctor Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar-large me-3">
+                            {{ appointment.doctor.name[0] }}
+                        </div>
+                        <div>
+                            <h5 class="mb-0">Dr. {{ appointment.doctor.name }}</h5>
+                            <p class="text-muted mb-0">{{ appointment.doctor.qualification }}</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label class="text-muted small">Specialization</label>
+                            <p><span class="badge bg-primary">{{ appointment.doctor.specialization.name }}</span></p>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="text-muted small">Contact</label>
+                            <p class="fw-bold">{{ appointment.doctor.contact_number }}</p>
+                        </div>
+                        {% if appointment.doctor.experience_years %}
+                        <div class="col-md-6">
+                            <label class="text-muted small">Experience</label>
+                            <p class="fw-bold">{{ appointment.doctor.experience_years }} years</p>
+                        </div>
+                        {% endif %}
+                        {% if appointment.doctor.consultation_fee %}
+                        <div class="col-md-6">
+                            <label class="text-muted small">Consultation Fee</label>
+                            <p class="fw-bold">₹{{ appointment.doctor.consultation_fee }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Treatment Details (if completed) -->
+            {% if appointment.status == 'Completed' and appointment.treatment %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-clipboard-pulse text-danger"></i> Treatment Record</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="text-muted small">Diagnosis</label>
+                        <p class="fw-bold">{{ appointment.treatment.diagnosis }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-muted small">Prescription</label>
+                        <div class="alert alert-info mb-0">
+                            {{ appointment.treatment.prescription }}
+                        </div>
+                    </div>
+                    {% if appointment.treatment.notes %}
+                    <div>
+                        <label class="text-muted small">Additional Notes</label>
+                        <p>{{ appointment.treatment.notes }}</p>
+                    </div>
+                    {% endif %}
+                    <div class="text-muted small mt-3">
+                        <i class="bi bi-clock"></i> Treated on {{ appointment.treatment.treatment_date.strftime('%d %B %Y at %I:%M %p') }}
+                    </div>
+                    <div class="mt-3">
+                        <a href="{{ url_for('patient.view_treatment', treatment_id=appointment.treatment.id) }}"
+                           class="btn btn-outline-primary">
+                            <i class="bi bi-eye"></i> View Full Treatment Record
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% elif appointment.status == 'Booked' %}
+            <div class="alert alert-info">
+                <h6 class="alert-heading"><i class="bi bi-info-circle"></i> Before Your Appointment</h6>
+                <ul class="mb-0 small">
+                    <li>Please arrive 10 minutes early</li>
+                    <li>Bring any relevant medical reports or prescriptions</li>
+                    <li>Carry a valid ID proof</li>
+                    <li>If you need to cancel, do so at least 1 hour in advance</li>
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

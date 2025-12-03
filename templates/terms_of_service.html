@@ -1,0 +1,368 @@
+{% extends "base.html" %}
+
+{% block title %}Terms of Service - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-3 mb-4">
+            <!-- Sidebar Navigation -->
+            <div class="card border-0 shadow-sm sticky-top" style="top: 130px;">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">Quick Navigation</h6>
+                    <nav class="nav flex-column">
+                        <a class="nav-link text-primary" href="#acceptance"><i class="bi bi-chevron-right"></i> Acceptance</a>
+                        <a class="nav-link text-primary" href="#accounts"><i class="bi bi-chevron-right"></i> User Accounts</a>
+                        <a class="nav-link text-primary" href="#services"><i class="bi bi-chevron-right"></i> Services</a>
+                        <a class="nav-link text-primary" href="#responsibilities"><i class="bi bi-chevron-right"></i> Responsibilities</a>
+                        <a class="nav-link text-primary" href="#appointments"><i class="bi bi-chevron-right"></i> Appointments</a>
+                        <a class="nav-link text-primary" href="#disclaimer"><i class="bi bi-chevron-right"></i> Disclaimer</a>
+                        <a class="nav-link text-primary" href="#fees"><i class="bi bi-chevron-right"></i> Fees</a>
+                        <a class="nav-link text-primary" href="#prohibited"><i class="bi bi-chevron-right"></i> Prohibited Use</a>
+                        <a class="nav-link text-primary" href="#termination"><i class="bi bi-chevron-right"></i> Termination</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <!-- Page Header -->
+            <div class="mb-4">
+                <h1 class="display-5 fw-bold mb-2"><i class="bi bi-file-earmark-text text-primary me-2"></i>Terms of Service</h1>
+                <p class="text-muted">Last Updated: November 29, 2025</p>
+                <hr>
+            </div>
+
+            <!-- Acceptance of Terms -->
+            <section id="acceptance" class="mb-5">
+                <h3 class="fw-bold mb-3">1. Acceptance of Terms</h3>
+                <p>
+                    By accessing and using the HealthCare Plus Hospital Management System ("the System"), you acknowledge that you have read, understood, and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.
+                </p>
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle me-2"></i><strong>Age Requirement:</strong> You must be at least 18 years old to create an account. For minors, a legal guardian must create and manage the account.
+                </div>
+                <p>
+                    We reserve the right to modify these terms at any time. Continued use of the System after changes constitutes acceptance of the modified terms.
+                </p>
+            </section>
+
+            <!-- User Accounts -->
+            <section id="accounts" class="mb-5">
+                <h3 class="fw-bold mb-3">2. User Accounts</h3>
+                <h5 class="fw-bold mt-4">2.1 Registration</h5>
+                <ul>
+                    <li>You must provide accurate, current, and complete information during registration</li>
+                    <li>You are responsible for maintaining the confidentiality of your login credentials</li>
+                    <li>One account per person - account sharing is prohibited</li>
+                    <li>You must notify us immediately of any unauthorized use of your account</li>
+                </ul>
+
+                <h5 class="fw-bold mt-4">2.2 Account Security</h5>
+                <ul>
+                    <li>Choose a strong password (minimum 6 characters)</li>
+                    <li>Do not share your password with anyone</li>
+                    <li>Log out after each session on shared computers</li>
+                    <li>You are responsible for all activities under your account</li>
+                </ul>
+
+                <h5 class="fw-bold mt-4">2.3 Account Types</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Account Type</th>
+                                <th>Created By</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="badge bg-info">Patient</span></td>
+                                <td>Self-registration</td>
+                                <td>Book appointments, view medical records</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-success">Doctor</span></td>
+                                <td>Hospital Administrator</td>
+                                <td>Manage appointments, treat patients</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-danger">Admin</span></td>
+                                <td>System Administrator</td>
+                                <td>Manage hospital operations</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Services Provided -->
+            <section id="services" class="mb-5">
+                <h3 class="fw-bold mb-3">3. Services Provided</h3>
+                <p>The System provides the following services:</p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body">
+                                <h6 class="card-title"><i class="bi bi-calendar-plus text-primary me-2"></i>Appointment Booking</h6>
+                                <p class="card-text small">Online scheduling system to book medical appointments 24/7</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body">
+                                <h6 class="card-title"><i class="bi bi-file-medical text-success me-2"></i>Medical Records</h6>
+                                <p class="card-text small">Access to your complete treatment history and prescriptions</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body">
+                                <h6 class="card-title"><i class="bi bi-search text-info me-2"></i>Doctor Search</h6>
+                                <p class="card-text small">Find doctors by specialization and view their availability</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body">
+                                <h6 class="card-title"><i class="bi bi-clock-history text-warning me-2"></i>History Tracking</h6>
+                                <p class="card-text small">View past appointments and treatment outcomes</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- User Responsibilities -->
+            <section id="responsibilities" class="mb-5">
+                <h3 class="fw-bold mb-3">4. User Responsibilities</h3>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <h6 class="mb-1"><i class="bi bi-check-circle text-success me-2"></i>Accurate Information</h6>
+                        <p class="mb-0 small">Provide truthful and accurate medical and personal information</p>
+                    </div>
+                    <div class="list-group-item">
+                        <h6 class="mb-1"><i class="bi bi-bell text-warning me-2"></i>Update Information</h6>
+                        <p class="mb-0 small">Keep your contact details and medical information current</p>
+                    </div>
+                    <div class="list-group-item">
+                        <h6 class="mb-1"><i class="bi bi-clock text-primary me-2"></i>Respect Appointments</h6>
+                        <p class="mb-0 small">Arrive on time for scheduled appointments or notify in advance</p>
+                    </div>
+                    <div class="list-group-item">
+                        <h6 class="mb-1"><i class="bi bi-person-check text-info me-2"></i>Professional Conduct</h6>
+                        <p class="mb-0 small">Treat healthcare professionals and staff with respect</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Appointment Policies -->
+            <section id="appointments" class="mb-5">
+                <h3 class="fw-bold mb-3">5. Appointment Policies</h3>
+
+                <h5 class="fw-bold mt-4">5.1 Booking Process</h5>
+                <ol>
+                    <li>Select a doctor and view their available time slots</li>
+                    <li>Choose your preferred date and time</li>
+                    <li>Receive instant confirmation via the system</li>
+                    <li>Appointment status: <span class="badge bg-info">Booked</span></li>
+                </ol>
+
+                <h5 class="fw-bold mt-4">5.2 Cancellation Policy</h5>
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i><strong>Cancellation Notice:</strong> Please cancel at least 24 hours before your scheduled appointment to avoid penalties.
+                </div>
+                <ul>
+                    <li><strong>More than 24 hours:</strong> Free cancellation, no penalty</li>
+                    <li><strong>Less than 24 hours:</strong> May incur cancellation fee</li>
+                    <li><strong>No-show:</strong> Full consultation fee charged</li>
+                </ul>
+
+                <h5 class="fw-bold mt-4">5.3 Rescheduling</h5>
+                <ul>
+                    <li>You can reschedule appointments based on doctor availability</li>
+                    <li>Same cancellation notice period applies</li>
+                    <li>Reschedule through your patient dashboard or contact support</li>
+                </ul>
+
+                <h5 class="fw-bold mt-4">5.4 No-Show Policy</h5>
+                <p>
+                    If you miss 3 or more appointments without prior notice, your account may be temporarily suspended. This ensures fair access to appointment slots for all patients.
+                </p>
+            </section>
+
+            <!-- Medical Disclaimer -->
+            <section id="disclaimer" class="mb-5">
+                <h3 class="fw-bold mb-3">6. Medical Disclaimer</h3>
+                <div class="alert alert-danger">
+                    <h5 class="alert-heading"><i class="bi bi-exclamation-octagon me-2"></i>Emergency Situations</h5>
+                    <hr>
+                    <p class="mb-0">
+                        <strong>This is NOT an emergency service.</strong> For medical emergencies, call <strong>112</strong> or visit the nearest emergency room immediately. Do not rely on this system for urgent medical needs.
+                    </p>
+                </div>
+                <ul>
+                    <li>The System is for appointment scheduling and record-keeping only</li>
+                    <li>It does not provide medical advice, diagnosis, or treatment</li>
+                    <li>Always consult qualified healthcare professionals for medical decisions</li>
+                    <li>System information should not replace professional medical consultation</li>
+                </ul>
+            </section>
+
+            <!-- Payment & Fees -->
+            <section id="fees" class="mb-5">
+                <h3 class="fw-bold mb-3">7. Payment & Fees</h3>
+                <h5 class="fw-bold mt-4">7.1 Consultation Fees</h5>
+                <ul>
+                    <li>Consultation fees vary by doctor and specialization</li>
+                    <li>Fees are clearly displayed on each doctor's profile</li>
+                    <li>Payment is typically made at the hospital after consultation</li>
+                </ul>
+
+                <h5 class="fw-bold mt-4">7.2 System Usage</h5>
+                <p>
+                    The Hospital Management System is free to use for patients. There are no subscription fees or hidden charges for booking appointments or accessing your medical records.
+                </p>
+
+                <h5 class="fw-bold mt-4">7.3 Refund Policy</h5>
+                <ul>
+                    <li>Cancellations made 24+ hours in advance: Full refund (if prepaid)</li>
+                    <li>Cancellations made less than 24 hours: 50% refund</li>
+                    <li>No-shows: No refund</li>
+                </ul>
+            </section>
+
+            <!-- Prohibited Activities -->
+            <section id="prohibited" class="mb-5">
+                <h3 class="fw-bold mb-3">8. Prohibited Activities</h3>
+                <p>The following activities are strictly prohibited:</p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card border-danger h-100">
+                            <div class="card-body">
+                                <h6 class="text-danger"><i class="bi bi-x-circle me-2"></i>Fraudulent Bookings</h6>
+                                <p class="small mb-0">Making fake appointments or providing false information</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-danger h-100">
+                            <div class="card-body">
+                                <h6 class="text-danger"><i class="bi bi-x-circle me-2"></i>Harassment</h6>
+                                <p class="small mb-0">Harassing or abusing healthcare staff or other users</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-danger h-100">
+                            <div class="card-body">
+                                <h6 class="text-danger"><i class="bi bi-x-circle me-2"></i>Unauthorized Access</h6>
+                                <p class="small mb-0">Attempting to access other users' accounts or data</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-danger h-100">
+                            <div class="card-body">
+                                <h6 class="text-danger"><i class="bi bi-x-circle me-2"></i>Data Scraping</h6>
+                                <p class="small mb-0">Automated data collection or system exploitation</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Limitation of Liability -->
+            <section class="mb-5">
+                <h3 class="fw-bold mb-3">9. Limitation of Liability</h3>
+                <p>
+                    The System is provided on an "as is" and "as available" basis. We do not guarantee 100% uptime or error-free operation. We are not liable for:
+                </p>
+                <ul>
+                    <li>System downtime or technical issues beyond our control</li>
+                    <li>Medical outcomes or treatment results</li>
+                    <li>Missed appointments due to system errors (we will work to reschedule)</li>
+                    <li>Data loss (though we maintain regular backups)</li>
+                    <li>Indirect, incidental, or consequential damages</li>
+                </ul>
+            </section>
+
+            <!-- Termination -->
+            <section id="termination" class="mb-5">
+                <h3 class="fw-bold mb-3">10. Account Termination</h3>
+                <h5 class="fw-bold mt-4">10.1 By You</h5>
+                <p>
+                    You may delete your account at any time through your profile settings or by contacting support. Note that medical records may be retained as required by law.
+                </p>
+
+                <h5 class="fw-bold mt-4">10.2 By Us</h5>
+                <p>We reserve the right to suspend or terminate accounts that:</p>
+                <ul>
+                    <li>Violate these Terms of Service</li>
+                    <li>Engage in prohibited activities</li>
+                    <li>Repeatedly miss appointments without notice</li>
+                    <li>Provide false or misleading information</li>
+                </ul>
+            </section>
+
+            <!-- Governing Law -->
+            <section class="mb-5">
+                <h3 class="fw-bold mb-3">11. Governing Law</h3>
+                <p>
+                    These Terms of Service are governed by the laws of India. Any disputes arising from these terms or use of the System shall be subject to the exclusive jurisdiction of courts in Mumbai, Maharashtra.
+                </p>
+            </section>
+
+            <!-- Contact -->
+            <section class="mb-5">
+                <h3 class="fw-bold mb-3">12. Contact Information</h3>
+                <p>For questions about these Terms of Service:</p>
+                <div class="card border-0 bg-light">
+                    <div class="card-body">
+                        <p class="mb-2"><i class="bi bi-envelope text-primary me-2"></i><strong>Email:</strong> legal@healthcareplus.com</p>
+                        <p class="mb-2"><i class="bi bi-telephone text-success me-2"></i><strong>Phone:</strong> +91 22 1234 5678</p>
+                        <p class="mb-0"><i class="bi bi-geo-alt text-danger me-2"></i><strong>Address:</strong> 123 Medical Street, Mumbai, MH 400001</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Acceptance -->
+            <section class="mb-5">
+                <div class="card border-primary">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary"><i class="bi bi-check2-square me-2"></i>Acknowledgment</h5>
+                        <p class="card-text">
+                            By creating an account and using our services, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
+                        </p>
+                        <p class="card-text small text-muted mb-0">
+                            <strong>Effective Date:</strong> November 29, 2025
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Back to Top -->
+            <div class="text-center">
+                <a href="#top" class="btn btn-outline-primary"><i class="bi bi-arrow-up"></i> Back to Top</a>
+                <a href="{{ url_for('index') }}" class="btn btn-primary ms-2"><i class="bi bi-house"></i> Back to Home</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .nav-link {
+        padding: 0.5rem 0;
+        font-size: 0.9rem;
+    }
+    .nav-link:hover {
+        color: #0d6efd !important;
+        padding-left: 0.5rem;
+        transition: all 0.3s;
+    }
+</style>
+{% endblock %}

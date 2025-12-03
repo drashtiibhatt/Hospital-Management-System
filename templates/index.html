@@ -1,0 +1,719 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Hospital Management System{% endblock %}
+
+{% block content %}
+<!-- Hero Carousel Section -->
+<section class="hero-carousel-section">
+    <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+        </div>
+
+        <div class="carousel-inner">
+            <!-- Slide 1: Main Hero -->
+            <div class="carousel-item active">
+                <div class="carousel-slide hero-slide-1">
+                    <div class="carousel-overlay"></div>
+                    <div class="container position-relative">
+                        <div class="row align-items-center min-vh-70">
+                            <div class="col-lg-7 text-white">
+                                <div class="slide-content">
+                                    <i class="bi bi-heart-pulse-fill display-3 mb-3 d-block slide-icon"></i>
+                                    <h1 class="display-3 fw-bold mb-4 text-shadow-strong">Your Health, Our Priority</h1>
+                                    <p class="lead mb-4 text-shadow">
+                                        Experience world-class healthcare with our modern hospital management system.
+                                        Book appointments, access medical records, and connect with expert doctors.
+                                    </p>
+                                    {% if not current_user.is_authenticated %}
+                                        <div class="d-flex gap-3">
+                                            <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg px-5 shadow">
+                                                <i class="bi bi-person-plus"></i> Get Started
+                                            </a>
+                                            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-lg px-5 border-2">
+                                                <i class="bi bi-box-arrow-in-right"></i> Login
+                                            </a>
+                                        </div>
+                                    {% else %}
+                                        <a href="{{ url_for(current_user.role + '.dashboard') }}" class="btn btn-light btn-lg px-5 shadow">
+                                            <i class="bi bi-speedometer2"></i> Go to Dashboard
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2: Expert Doctors -->
+            <div class="carousel-item">
+                <div class="carousel-slide hero-slide-2">
+                    <div class="carousel-overlay"></div>
+                    <div class="container position-relative">
+                        <div class="row align-items-center min-vh-70">
+                            <div class="col-lg-7 text-white">
+                                <div class="slide-content">
+                                    <i class="bi bi-person-badge-fill display-3 mb-3 d-block slide-icon"></i>
+                                    <h1 class="display-3 fw-bold mb-4 text-shadow-strong">Expert Medical Professionals</h1>
+                                    <p class="lead mb-4 text-shadow">
+                                        Our team of {{ total_doctors }}+ highly qualified doctors across {{ total_specializations }}+ specializations
+                                        are dedicated to providing you with the best healthcare experience.
+                                    </p>
+                                    <a href="{{ url_for('auth.register') if not current_user.is_authenticated else url_for('patient.search_doctors') }}"
+                                       class="btn btn-light btn-lg px-5 shadow">
+                                        <i class="bi bi-search"></i> Find a Doctor
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Easy Appointments -->
+            <div class="carousel-item">
+                <div class="carousel-slide hero-slide-3">
+                    <div class="carousel-overlay"></div>
+                    <div class="container position-relative">
+                        <div class="row align-items-center min-vh-70">
+                            <div class="col-lg-7 text-white">
+                                <div class="slide-content">
+                                    <i class="bi bi-calendar-check-fill display-3 mb-3 d-block slide-icon"></i>
+                                    <h1 class="display-3 fw-bold mb-4 text-shadow-strong">Book Appointments Instantly</h1>
+                                    <p class="lead mb-4 text-shadow">
+                                        Skip the queues! Book your appointments online 24/7. View doctor availability,
+                                        choose your preferred time slot, and get instant confirmation.
+                                    </p>
+                                    <a href="{{ url_for('auth.register') if not current_user.is_authenticated else url_for('patient.search_doctors') }}"
+                                       class="btn btn-light btn-lg px-5 shadow">
+                                        <i class="bi bi-calendar-plus"></i> Book Now
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Our Features</h2>
+            <p class="text-muted">Comprehensive healthcare management at your fingertips</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Feature 1 -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-calendar-check text-primary" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Easy Appointment Booking</h5>
+                        <p class="card-text text-muted">
+                            Book appointments with your preferred doctors in just a few clicks.
+                            View real-time availability and choose convenient time slots.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-file-medical text-success" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Medical Records</h5>
+                        <p class="card-text text-muted">
+                            Access your complete medical history, treatment records, and prescriptions
+                            anytime, anywhere in a secure digital format.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-person-badge text-info" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Expert Doctors</h5>
+                        <p class="card-text text-muted">
+                            Browse through our panel of experienced doctors across various
+                            specializations and choose the best care for your needs.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 4 -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-shield-check text-warning" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Secure & Private</h5>
+                        <p class="card-text text-muted">
+                            Your medical data is protected with industry-standard security measures.
+                            Complete privacy and confidentiality guaranteed.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 5 -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-clock-history text-danger" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">24/7 Access</h5>
+                        <p class="card-text text-muted">
+                            Manage your healthcare anytime with our always-available platform.
+                            Book, reschedule, or cancel appointments at your convenience.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 6 -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-star text-primary" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Multiple Specializations</h5>
+                        <p class="card-text text-muted">
+                            Access healthcare across various specializations including Cardiology,
+                            Neurology, Orthopedics, Pediatrics, and more.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">How It Works</h2>
+            <p class="text-muted">Get started in three simple steps</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="step-number mb-3">1</div>
+                    <h5 class="fw-bold">Register</h5>
+                    <p class="text-muted">
+                        Create your free account with basic information.
+                        Quick and easy registration process.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="step-number mb-3">2</div>
+                    <h5 class="fw-bold">Find a Doctor</h5>
+                    <p class="text-muted">
+                        Search for doctors by specialization or name.
+                        View their profiles and availability.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="step-number mb-3">3</div>
+                    <h5 class="fw-bold">Book Appointment</h5>
+                    <p class="text-muted">
+                        Choose a convenient time slot and book your appointment.
+                        Receive instant confirmation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Dynamic Statistics Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-gradient">Our Healthcare by Numbers</h2>
+            <p class="text-muted">Real-time statistics from our hospital management system</p>
+        </div>
+        <div class="row text-center g-4">
+            <div class="col-md-3">
+                <div class="stat-card-enhanced bg-white shadow-sm rounded-4 p-4">
+                    <div class="stat-icon-wrapper mb-3">
+                        <i class="bi bi-people text-primary display-3"></i>
+                    </div>
+                    <h2 class="fw-bold stat-number">{{ total_patients }}+</h2>
+                    <p class="text-muted mb-0">Happy Patients</p>
+                    <small class="text-success"><i class="bi bi-graph-up"></i> Registered</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card-enhanced bg-white shadow-sm rounded-4 p-4">
+                    <div class="stat-icon-wrapper mb-3">
+                        <i class="bi bi-person-badge text-success display-3"></i>
+                    </div>
+                    <h2 class="fw-bold stat-number">{{ total_doctors }}+</h2>
+                    <p class="text-muted mb-0">Expert Doctors</p>
+                    <small class="text-success"><i class="bi bi-award"></i> Certified</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card-enhanced bg-white shadow-sm rounded-4 p-4">
+                    <div class="stat-icon-wrapper mb-3">
+                        <i class="bi bi-star text-warning display-3"></i>
+                    </div>
+                    <h2 class="fw-bold stat-number">{{ total_specializations }}+</h2>
+                    <p class="text-muted mb-0">Specializations</p>
+                    <small class="text-info"><i class="bi bi-hospital"></i> Available</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card-enhanced bg-white shadow-sm rounded-4 p-4">
+                    <div class="stat-icon-wrapper mb-3">
+                        <i class="bi bi-calendar-check text-info display-3"></i>
+                    </div>
+                    <h2 class="fw-bold stat-number">{{ total_appointments }}+</h2>
+                    <p class="text-muted mb-0">Appointments</p>
+                    <small class="text-primary"><i class="bi bi-clock-history"></i> Completed</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Specializations Showcase Section -->
+{% if specializations %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-gradient">Our Medical Specializations</h2>
+            <p class="text-muted">Expert care across multiple healthcare domains</p>
+        </div>
+        <div class="row g-4">
+            {% for spec in specializations %}
+            <div class="col-md-4">
+                <div class="card specialization-card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="specialization-icon mb-3">
+                            {% if 'cardio' in spec.name.lower() %}
+                                <i class="bi bi-heart-pulse text-danger" style="font-size: 3rem;"></i>
+                            {% elif 'neuro' in spec.name.lower() %}
+                                <i class="bi bi-brain text-info" style="font-size: 3rem;"></i>
+                            {% elif 'ortho' in spec.name.lower() %}
+                                <i class="bi bi-bandaid text-warning" style="font-size: 3rem;"></i>
+                            {% elif 'pediatric' in spec.name.lower() %}
+                                <i class="bi bi-hospital text-success" style="font-size: 3rem;"></i>
+                            {% elif 'derma' in spec.name.lower() %}
+                                <i class="bi bi-person-badge text-primary" style="font-size: 3rem;"></i>
+                            {% else %}
+                                <i class="bi bi-clipboard-pulse text-primary" style="font-size: 3rem;"></i>
+                            {% endif %}
+                        </div>
+                        <h5 class="card-title fw-bold mb-3">{{ spec.name }}</h5>
+                        <p class="card-text text-muted small mb-3">
+                            {{ spec.description[:100] }}{% if spec.description|length > 100 %}...{% endif %}
+                        </p>
+                        <div class="mb-3">
+                            <span class="badge bg-primary rounded-pill">
+                                {{ spec.doctors|list|length }} Doctor(s)
+                            </span>
+                        </div>
+                        {% if current_user.is_authenticated and current_user.role == 'patient' %}
+                            <a href="{{ url_for('patient.doctors_by_specialization', specialization_id=spec.id) }}"
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-search"></i> View Doctors
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('auth.register') }}"
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-person-plus"></i> Register to View
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Featured Doctors Section -->
+{% if featured_doctors %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-gradient">Meet Our Expert Doctors</h2>
+            <p class="text-muted">Experienced healthcare professionals dedicated to your wellbeing</p>
+        </div>
+        <div class="row g-4">
+            {% for doctor in featured_doctors %}
+            <div class="col-md-3">
+                <div class="card doctor-card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="doctor-avatar mb-3">
+                            <div class="avatar-circle">
+                                {{ doctor.name[3:5].upper() }}
+                            </div>
+                        </div>
+                        <h5 class="card-title fw-bold mb-1">Dr. {{ doctor.name }}</h5>
+                        <p class="text-muted small mb-2">{{ doctor.qualification }}</p>
+                        <span class="badge bg-primary mb-3">{{ doctor.specialization.name }}</span>
+                        <div class="doctor-info">
+                            {% if doctor.experience_years %}
+                            <p class="small mb-2">
+                                <i class="bi bi-briefcase text-muted"></i>
+                                <strong>{{ doctor.experience_years }}</strong> years exp.
+                            </p>
+                            {% endif %}
+                            {% if doctor.consultation_fee %}
+                            <p class="small mb-2">
+                                <i class="bi bi-currency-rupee text-muted"></i>
+                                <strong>₹{{ doctor.consultation_fee }}</strong>
+                            </p>
+                            {% endif %}
+                        </div>
+                        {% if current_user.is_authenticated and current_user.role == 'patient' %}
+                            <a href="{{ url_for('patient.view_doctor', doctor_id=doctor.id) }}"
+                               class="btn btn-primary btn-sm w-100 mt-2">
+                                <i class="bi bi-calendar-plus"></i> Book Appointment
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('auth.register') }}"
+                               class="btn btn-primary btn-sm w-100 mt-2">
+                                <i class="bi bi-person-plus"></i> Register to Book
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            {% if current_user.is_authenticated and current_user.role == 'patient' %}
+                <a href="{{ url_for('patient.search_doctors') }}" class="btn btn-primary btn-lg">
+                    View All Doctors <i class="bi bi-arrow-right"></i>
+                </a>
+            {% else %}
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">
+                    Register to View All <i class="bi bi-arrow-right"></i>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Call to Action -->
+{% if not current_user.is_authenticated %}
+<section class="cta-section bg-primary text-white py-5">
+    <div class="container text-center">
+        <h2 class="display-5 fw-bold mb-4">Ready to Get Started?</h2>
+        <p class="lead mb-4">
+            Join thousands of patients managing their healthcare efficiently
+        </p>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg px-5">
+            <i class="bi bi-person-plus"></i> Register Now
+        </a>
+    </div>
+</section>
+{% endif %}
+
+<style>
+    /* Medical Color Palette */
+    :root {
+        --medical-blue: #0d6efd;
+        --medical-green: #198754;
+        --medical-cyan: #0dcaf0;
+        --medical-purple: #6f42c1;
+        --medical-indigo: #6610f2;
+    }
+
+    /* Hero Carousel Background Images */
+    .hero-slide-1 {
+        background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+        background-image: url('/static/images/hero-slide-1.jpg');
+        background-position: center center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        min-height: 70vh;
+    }
+
+    .hero-slide-2 {
+        background: linear-gradient(135deg, #198754 0%, #0dcaf0 100%);
+        background-image: url('/static/images/hero-slide-2.jpg');
+        background-position: center center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        min-height: 70vh;
+    }
+
+    .hero-slide-3 {
+        background: linear-gradient(135deg, #6f42c1 0%, #0d6efd 100%);
+        background-image: url('/static/images/hero-slide-3.jpg');
+        background-position: center center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        min-height: 70vh;
+    }
+
+    .carousel-slide {
+        position: relative;
+        padding: 3rem 0;
+    }
+
+    /* Dark overlay to make text readable */
+    .carousel-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(13, 110, 253, 0.4) 100%);
+        z-index: 1;
+    }
+
+    .carousel-slide .container {
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Text shadows for better readability */
+    .text-shadow {
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+    }
+
+    .text-shadow-strong {
+        text-shadow: 3px 3px 12px rgba(0, 0, 0, 0.8),
+                     1px 1px 3px rgba(0, 0, 0, 0.9);
+    }
+
+    .slide-content {
+        animation: slideInUp 0.8s ease-out;
+    }
+
+    .slide-icon {
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    .min-vh-70 {
+        min-height: 70vh;
+    }
+
+    /* Text Gradient */
+    .text-gradient {
+        background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Enhanced Statistics Cards */
+    .stat-card-enhanced {
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .stat-card-enhanced:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15) !important;
+    }
+
+    .stat-icon-wrapper {
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card-enhanced:hover .stat-icon-wrapper {
+        transform: scale(1.1);
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        color: #212529;
+    }
+
+    /* Specialization Cards */
+    .specialization-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .specialization-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.15) !important;
+    }
+
+    .specialization-icon {
+        transition: transform 0.3s ease;
+    }
+
+    .specialization-card:hover .specialization-icon {
+        transform: scale(1.15) rotate(5deg);
+    }
+
+    /* Doctor Cards */
+    .doctor-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .doctor-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.15) !important;
+    }
+
+    .avatar-circle {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin: 0 auto;
+        transition: all 0.3s ease;
+    }
+
+    .doctor-card:hover .avatar-circle {
+        transform: scale(1.1);
+        box-shadow: 0 8px 20px rgba(13, 110, 253, 0.4);
+    }
+
+    /* Feature Cards */
+    .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
+    }
+
+    /* How It Works Steps */
+    .step-number {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+        color: white;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .step-number:hover {
+        transform: scale(1.15);
+        box-shadow: 0 8px 20px rgba(13, 110, 253, 0.4);
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+    }
+
+    /* Carousel Controls */
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 50%;
+        padding: 20px;
+    }
+
+    .carousel-indicators button {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin: 0 5px;
+    }
+
+    /* Animations */
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Smooth Scroll */
+    section {
+        scroll-margin-top: 70px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .carousel-slide {
+            min-height: 60vh !important;
+        }
+
+        .slide-content h1 {
+            font-size: 2rem !important;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+        }
+
+        .avatar-circle {
+            width: 60px;
+            height: 60px;
+            font-size: 1.2rem;
+        }
+    }
+</style>
+{% endblock %}

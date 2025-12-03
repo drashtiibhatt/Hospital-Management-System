@@ -1,0 +1,1181 @@
+openapi: 3.0.3
+info:
+  title: Hospital Management System API
+  description: |
+    A comprehensive web-based Hospital Management System built with Flask.
+
+    This API provides role-based access control for three user types:
+    - **Admin**: Manages doctors, patients, and appointments
+    - **Doctor**: Manages appointments, patient records, and availability
+    - **Patient**: Books appointments and accesses treatment history
+
+    ## Authentication
+    The API uses session-based authentication with Flask-Login.
+    Login is required for most endpoints with role-based access control.
+
+    ## Security
+    - Bcrypt password hashing
+    - CSRF protection on all forms
+    - SQL injection prevention via ORM
+    - Role-based access control (RBAC)
+  version: 0.5.0
+  contact:
+    name: IIT Madras Student
+    email: admin@hospital.com
+  license:
+    name: Educational Use Only
+    url: https://www.iitm.ac.in
+
+servers:
+  - url: http://127.0.0.1:5000
+    description: Development server
+  - url: http://localhost:5000
+    description: Local server
+
+tags:
+  - name: Authentication
+    description: User authentication and legal pages
+  - name: Admin
+    description: Admin operations (Admin role required)
+  - name: Doctor
+    description: Doctor operations (Doctor role required)
+  - name: Patient
+    description: Patient operations (Patient role required)
+
+paths:
+  # ==================== AUTHENTICATION ROUTES ====================
+  /:
+    get:
+      tags:
+        - Authentication
+      summary: Landing page
+      description: Public homepage with hospital information and statistics
+      responses:
+        '200':
+          description: Successful response
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /login:
+    get:
+      tags:
+        - Authentication
+      summary: Login page
+      description: Display login form
+      responses:
+        '200':
+          description: Login form displayed
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticate user and create session
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: admin
+                password:
+                  type: string
+                  example: admin123
+              required:
+                - username
+                - password
+      responses:
+        '302':
+          description: Redirect to role-based dashboard
+        '401':
+          description: Invalid credentials
+
+  /register:
+    get:
+      tags:
+        - Authentication
+      summary: Registration page
+      description: Display patient registration form
+      responses:
+        '200':
+          description: Registration form displayed
+    post:
+      tags:
+        - Authentication
+      summary: Patient registration
+      description: Create new patient account
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatientRegistration'
+      responses:
+        '302':
+          description: Redirect to login page
+        '400':
+          description: Validation error
+
+  /logout:
+    get:
+      tags:
+        - Authentication
+      summary: Logout
+      description: End user session and logout
+      security:
+        - sessionAuth: []
+      responses:
+        '302':
+          description: Redirect to homepage
+
+  /change-password:
+    get:
+      tags:
+        - Authentication
+      summary: Change password page
+      description: Display password change form
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: Password change form displayed
+    post:
+      tags:
+        - Authentication
+      summary: Update password
+      description: Change user password
+      security:
+        - sessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                current_password:
+                  type: string
+                new_password:
+                  type: string
+                confirm_password:
+                  type: string
+      responses:
+        '302':
+          description: Password updated successfully
+        '400':
+          description: Validation error
+
+  /privacy-policy:
+    get:
+      tags:
+        - Authentication
+      summary: Privacy Policy
+      description: Display privacy policy page
+      responses:
+        '200':
+          description: Privacy policy page
+
+  /terms-of-service:
+    get:
+      tags:
+        - Authentication
+      summary: Terms of Service
+      description: Display terms of service page
+      responses:
+        '200':
+          description: Terms of service page
+
+  /faq:
+    get:
+      tags:
+        - Authentication
+      summary: FAQ
+      description: Display frequently asked questions
+      responses:
+        '200':
+          description: FAQ page
+
+  # ==================== ADMIN ROUTES ====================
+  /admin/dashboard:
+    get:
+      tags:
+        - Admin
+      summary: Admin dashboard
+      description: Display admin dashboard with statistics
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: Dashboard displayed with statistics
+          content:
+            text/html:
+              schema:
+                type: string
+        '403':
+          description: Access denied - Admin role required
+
+  /admin/doctors:
+    get:
+      tags:
+        - Admin
+      summary: List all doctors
+      description: Display all doctors with search functionality
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: search
+          in: query
+          description: Search term for doctor name or specialization
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of doctors
+
+  /admin/doctors/add:
+    get:
+      tags:
+        - Admin
+      summary: Add doctor form
+      description: Display form to add new doctor
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: Add doctor form displayed
+    post:
+      tags:
+        - Admin
+      summary: Create new doctor
+      description: Add new doctor to the system
+      security:
+        - sessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DoctorCreate'
+      responses:
+        '302':
+          description: Doctor created successfully
+        '400':
+          description: Validation error
+
+  /admin/doctors/edit/{id}:
+    get:
+      tags:
+        - Admin
+      summary: Edit doctor form
+      description: Display form to edit doctor details
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Edit doctor form displayed
+        '404':
+          description: Doctor not found
+    post:
+      tags:
+        - Admin
+      summary: Update doctor
+      description: Update doctor information
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DoctorUpdate'
+      responses:
+        '302':
+          description: Doctor updated successfully
+        '404':
+          description: Doctor not found
+
+  /admin/doctors/delete/{id}:
+    post:
+      tags:
+        - Admin
+      summary: Delete doctor
+      description: Remove doctor from the system
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '302':
+          description: Doctor deleted successfully
+        '404':
+          description: Doctor not found
+
+  /admin/patients:
+    get:
+      tags:
+        - Admin
+      summary: List all patients
+      description: Display all patients with search functionality
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: search
+          in: query
+          description: Search term for patient name or email
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of patients
+
+  /admin/patients/edit/{id}:
+    get:
+      tags:
+        - Admin
+      summary: Edit patient form
+      description: Display form to edit patient details
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Edit patient form displayed
+        '404':
+          description: Patient not found
+    post:
+      tags:
+        - Admin
+      summary: Update patient
+      description: Update patient information
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatientUpdate'
+      responses:
+        '302':
+          description: Patient updated successfully
+        '404':
+          description: Patient not found
+
+  /admin/appointments:
+    get:
+      tags:
+        - Admin
+      summary: View all appointments
+      description: Display all appointments in the system
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: status
+          in: query
+          description: Filter by appointment status
+          schema:
+            type: string
+            enum: [Booked, Completed, Cancelled]
+      responses:
+        '200':
+          description: List of appointments
+
+  /admin/specializations:
+    get:
+      tags:
+        - Admin
+      summary: Manage specializations
+      description: View and manage medical specializations
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: List of specializations
+
+  # ==================== DOCTOR ROUTES ====================
+  /doctor/dashboard:
+    get:
+      tags:
+        - Doctor
+      summary: Doctor dashboard
+      description: Display doctor dashboard with appointments
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: Dashboard displayed
+        '403':
+          description: Access denied - Doctor role required
+
+  /doctor/appointments:
+    get:
+      tags:
+        - Doctor
+      summary: View appointments
+      description: Display all appointments assigned to doctor
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: status
+          in: query
+          description: Filter by status
+          schema:
+            type: string
+            enum: [Booked, Completed, Cancelled]
+        - name: date
+          in: query
+          description: Filter by date
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: List of appointments
+
+  /doctor/appointments/complete/{id}:
+    get:
+      tags:
+        - Doctor
+      summary: Complete appointment form
+      description: Display form to complete appointment with treatment
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Complete appointment form displayed
+        '404':
+          description: Appointment not found
+    post:
+      tags:
+        - Doctor
+      summary: Complete appointment
+      description: Mark appointment as completed and add treatment details
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TreatmentCreate'
+      responses:
+        '302':
+          description: Appointment completed successfully
+        '404':
+          description: Appointment not found
+
+  /doctor/appointments/cancel/{id}:
+    post:
+      tags:
+        - Doctor
+      summary: Cancel appointment
+      description: Cancel an appointment
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '302':
+          description: Appointment cancelled successfully
+        '404':
+          description: Appointment not found
+
+  /doctor/patients:
+    get:
+      tags:
+        - Doctor
+      summary: View patient list
+      description: Display all patients who have appointments with this doctor
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: List of patients
+
+  /doctor/patients/{id}:
+    get:
+      tags:
+        - Doctor
+      summary: Patient history
+      description: View detailed patient history and treatment records
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Patient history displayed
+        '404':
+          description: Patient not found
+
+  /doctor/availability:
+    get:
+      tags:
+        - Doctor
+      summary: Manage availability
+      description: Display form to set 7-day availability schedule
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: Availability form displayed
+    post:
+      tags:
+        - Doctor
+      summary: Update availability
+      description: Set or update doctor's availability schedule
+      security:
+        - sessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DoctorAvailability'
+      responses:
+        '302':
+          description: Availability updated successfully
+
+  /doctor/profile:
+    get:
+      tags:
+        - Doctor
+      summary: View profile
+      description: Display doctor profile
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: Profile displayed
+    post:
+      tags:
+        - Doctor
+      summary: Update profile
+      description: Update doctor profile information
+      security:
+        - sessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DoctorProfileUpdate'
+      responses:
+        '302':
+          description: Profile updated successfully
+
+  # ==================== PATIENT ROUTES ====================
+  /patient/dashboard:
+    get:
+      tags:
+        - Patient
+      summary: Patient dashboard
+      description: Display patient dashboard with upcoming appointments
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: Dashboard displayed
+        '403':
+          description: Access denied - Patient role required
+
+  /patient/doctors:
+    get:
+      tags:
+        - Patient
+      summary: Search doctors
+      description: Search and filter doctors by specialization
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: specialization
+          in: query
+          description: Filter by specialization
+          schema:
+            type: string
+        - name: search
+          in: query
+          description: Search by doctor name
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of doctors
+
+  /patient/doctors/{id}:
+    get:
+      tags:
+        - Patient
+      summary: Doctor details
+      description: View doctor profile and availability
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Doctor details displayed
+        '404':
+          description: Doctor not found
+
+  /patient/appointments/book/{doctor_id}:
+    get:
+      tags:
+        - Patient
+      summary: Book appointment form
+      description: Display appointment booking form with available slots
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: doctor_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Booking form displayed
+        '404':
+          description: Doctor not found
+    post:
+      tags:
+        - Patient
+      summary: Create appointment
+      description: Book an appointment with selected doctor
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: doctor_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AppointmentCreate'
+      responses:
+        '302':
+          description: Appointment booked successfully
+        '400':
+          description: Validation error or time slot conflict
+        '404':
+          description: Doctor not found
+
+  /patient/appointments:
+    get:
+      tags:
+        - Patient
+      summary: My appointments
+      description: View all patient appointments
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: status
+          in: query
+          description: Filter by status
+          schema:
+            type: string
+            enum: [Booked, Completed, Cancelled]
+      responses:
+        '200':
+          description: List of appointments
+
+  /patient/appointments/cancel/{id}:
+    post:
+      tags:
+        - Patient
+      summary: Cancel appointment
+      description: Cancel a booked appointment
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '302':
+          description: Appointment cancelled successfully
+        '404':
+          description: Appointment not found
+
+  /patient/treatment-history:
+    get:
+      tags:
+        - Patient
+      summary: Treatment history
+      description: View complete treatment history with diagnoses and prescriptions
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: Treatment history displayed
+
+  /patient/profile:
+    get:
+      tags:
+        - Patient
+      summary: View profile
+      description: Display patient profile
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: Profile displayed
+    post:
+      tags:
+        - Patient
+      summary: Update profile
+      description: Update patient profile information
+      security:
+        - sessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatientProfileUpdate'
+      responses:
+        '302':
+          description: Profile updated successfully
+
+# ==================== COMPONENTS ====================
+components:
+  securitySchemes:
+    sessionAuth:
+      type: apiKey
+      in: cookie
+      name: session
+      description: Flask session-based authentication
+
+  schemas:
+    # User Schemas
+    PatientRegistration:
+      type: object
+      required:
+        - username
+        - email
+        - password
+        - name
+        - age
+        - gender
+        - phone
+        - address
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 80
+          example: john_doe
+        email:
+          type: string
+          format: email
+          example: john@example.com
+        password:
+          type: string
+          minLength: 6
+          example: password123
+        name:
+          type: string
+          maxLength: 100
+          example: John Doe
+        age:
+          type: integer
+          minimum: 0
+          maximum: 150
+          example: 35
+        gender:
+          type: string
+          enum: [Male, Female, Other]
+          example: Male
+        phone:
+          type: string
+          maxLength: 15
+          example: '+91 9876543210'
+        address:
+          type: string
+          example: '123 Main St, Mumbai, MH 400001'
+
+    DoctorCreate:
+      type: object
+      required:
+        - username
+        - email
+        - password
+        - name
+        - specialization_id
+        - license_number
+        - experience_years
+        - consultation_fee
+      properties:
+        username:
+          type: string
+          example: dr.smith
+        email:
+          type: string
+          format: email
+          example: dr.smith@hospital.com
+        password:
+          type: string
+          example: doctor123
+        name:
+          type: string
+          example: Dr. John Smith
+        specialization_id:
+          type: integer
+          example: 1
+        license_number:
+          type: string
+          example: MED12345
+        experience_years:
+          type: integer
+          minimum: 0
+          example: 10
+        consultation_fee:
+          type: number
+          format: float
+          example: 500.00
+        phone:
+          type: string
+          example: '+91 9876543210'
+
+    DoctorUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Dr. John Smith
+        specialization_id:
+          type: integer
+          example: 1
+        license_number:
+          type: string
+          example: MED12345
+        experience_years:
+          type: integer
+          example: 10
+        consultation_fee:
+          type: number
+          format: float
+          example: 500.00
+        phone:
+          type: string
+          example: '+91 9876543210'
+
+    PatientUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          example: John Doe
+        age:
+          type: integer
+          example: 35
+        gender:
+          type: string
+          enum: [Male, Female, Other]
+        phone:
+          type: string
+          example: '+91 9876543210'
+        address:
+          type: string
+          example: '123 Main St, Mumbai'
+        is_active:
+          type: boolean
+          example: true
+
+    AppointmentCreate:
+      type: object
+      required:
+        - appointment_date
+        - appointment_time
+      properties:
+        appointment_date:
+          type: string
+          format: date
+          example: '2025-12-01'
+        appointment_time:
+          type: string
+          example: '10:00 AM'
+        reason:
+          type: string
+          example: 'Regular checkup'
+
+    TreatmentCreate:
+      type: object
+      required:
+        - diagnosis
+        - prescription
+      properties:
+        diagnosis:
+          type: string
+          example: 'Common cold with mild fever'
+        prescription:
+          type: string
+          example: 'Paracetamol 500mg - 3 times daily for 3 days'
+        treatment_notes:
+          type: string
+          example: 'Advised rest and plenty of fluids'
+
+    DoctorAvailability:
+      type: object
+      properties:
+        monday:
+          type: string
+          example: '9:00 AM - 5:00 PM'
+        tuesday:
+          type: string
+          example: '9:00 AM - 5:00 PM'
+        wednesday:
+          type: string
+          example: '9:00 AM - 5:00 PM'
+        thursday:
+          type: string
+          example: '9:00 AM - 5:00 PM'
+        friday:
+          type: string
+          example: '9:00 AM - 5:00 PM'
+        saturday:
+          type: string
+          example: '9:00 AM - 1:00 PM'
+        sunday:
+          type: string
+          example: 'Not Available'
+
+    DoctorProfileUpdate:
+      type: object
+      properties:
+        phone:
+          type: string
+          example: '+91 9876543210'
+        consultation_fee:
+          type: number
+          format: float
+          example: 600.00
+        bio:
+          type: string
+          example: 'Experienced cardiologist with 15 years of practice'
+
+    PatientProfileUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          example: John Doe
+        age:
+          type: integer
+          example: 36
+        gender:
+          type: string
+          enum: [Male, Female, Other]
+        phone:
+          type: string
+          example: '+91 9876543210'
+        address:
+          type: string
+          example: '123 Main St, Mumbai'
+
+    # Response Models
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: john_doe
+        email:
+          type: string
+          example: john@example.com
+        role:
+          type: string
+          enum: [admin, doctor, patient]
+          example: patient
+        is_active:
+          type: boolean
+          example: true
+
+    Doctor:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Dr. John Smith
+        specialization:
+          type: string
+          example: Cardiology
+        license_number:
+          type: string
+          example: MED12345
+        experience_years:
+          type: integer
+          example: 10
+        consultation_fee:
+          type: number
+          format: float
+          example: 500.00
+        phone:
+          type: string
+          example: '+91 9876543210'
+
+    Patient:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: John Doe
+        age:
+          type: integer
+          example: 35
+        gender:
+          type: string
+          example: Male
+        phone:
+          type: string
+          example: '+91 9876543210'
+        address:
+          type: string
+          example: '123 Main St, Mumbai'
+
+    Appointment:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        patient_id:
+          type: integer
+          example: 1
+        doctor_id:
+          type: integer
+          example: 1
+        appointment_date:
+          type: string
+          format: date
+          example: '2025-12-01'
+        appointment_time:
+          type: string
+          example: '10:00 AM'
+        status:
+          type: string
+          enum: [Booked, Completed, Cancelled]
+          example: Booked
+        created_at:
+          type: string
+          format: date-time
+          example: '2025-11-29T10:00:00Z'
+
+    Treatment:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        appointment_id:
+          type: integer
+          example: 1
+        diagnosis:
+          type: string
+          example: Common cold with mild fever
+        prescription:
+          type: string
+          example: 'Paracetamol 500mg - 3 times daily'
+        treatment_notes:
+          type: string
+          example: 'Advised rest and fluids'
+        treatment_date:
+          type: string
+          format: date-time
+          example: '2025-11-29T14:30:00Z'
+
+    Specialization:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Cardiology
+        description:
+          type: string
+          example: 'Heart and cardiovascular system'
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: 'Validation error'
+        message:
+          type: string
+          example: 'Invalid input provided'
+
+security:
+  - sessionAuth: []

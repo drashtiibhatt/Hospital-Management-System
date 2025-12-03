@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Specializations - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-6 fw-bold">
+                <i class="bi bi-star text-warning"></i> Manage Specializations
+            </h1>
+            <p class="text-muted">Manage medical specializations and departments</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ url_for('admin.add_specialization') }}" class="btn btn-primary btn-lg">
+                <i class="bi bi-plus-circle"></i> Add Specialization
+            </a>
+        </div>
+    </div>
+
+    <!-- Specializations Grid -->
+    <div class="row">
+        {% if specializations %}
+            {% for spec in specializations %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h5 class="card-title mb-1">
+                                <i class="bi bi-hospital text-primary"></i>
+                                {{ spec.name }}
+                            </h5>
+                            <span class="badge bg-primary">{{ spec.doctors|list|length }} Doctor(s)</span>
+                        </div>
+
+                        <p class="card-text text-muted mb-3">
+                            {{ spec.description }}
+                        </p>
+
+                        <!-- Doctors in this specialization -->
+                        {% if spec.doctors %}
+                        <div class="mt-3">
+                            <h6 class="text-muted small mb-2">Doctors:</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for doctor in spec.doctors[:3] %}
+                                <span class="badge bg-light text-dark">
+                                    Dr. {{ doctor.name }}
+                                </span>
+                                {% endfor %}
+                                {% if spec.doctors|list|length > 3 %}
+                                <span class="badge bg-light text-dark">
+                                    +{{ spec.doctors|list|length - 3 }} more
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="empty-state py-5">
+                    <i class="bi bi-star"></i>
+                    <h5>No Specializations</h5>
+                    <p class="text-muted">Add specializations to organize your doctors</p>
+                    <a href="{{ url_for('admin.add_specialization') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Add First Specialization
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

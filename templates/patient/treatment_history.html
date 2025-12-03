@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Treatment History - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-6 fw-bold">
+                <i class="bi bi-clipboard-pulse text-info"></i> Treatment History
+            </h1>
+            <p class="text-muted">Your complete medical treatment records</p>
+        </div>
+    </div>
+
+    <!-- Summary Statistics -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-light">
+                <div class="card-body text-center">
+                    <h3 class="mb-0 text-primary">{{ total_treatments }}</h3>
+                    <p class="text-muted mb-0 small">Total Treatments</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-light">
+                <div class="card-body text-center">
+                    <h3 class="mb-0 text-success">{{ unique_doctors }}</h3>
+                    <p class="text-muted mb-0 small">Doctors Consulted</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-light">
+                <div class="card-body text-center">
+                    <h3 class="mb-0 text-info">{{ unique_specializations }}</h3>
+                    <p class="text-muted mb-0 small">Specializations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Treatment Timeline -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    {% if treatments %}
+                        <div class="timeline">
+                            {% for treatment in treatments %}
+                            <div class="timeline-item">
+                                <div class="timeline-marker bg-success"></div>
+                                <div class="timeline-content">
+                                    <div class="card bg-light mb-0">
+                                        <div class="card-body">
+                                            <!-- Header -->
+                                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                                <div>
+                                                    <h6 class="mb-1">
+                                                        Dr. {{ treatment.appointment.doctor.name }}
+                                                    </h6>
+                                                    <p class="text-muted small mb-0">
+                                                        <span class="badge bg-primary">{{ treatment.appointment.doctor.specialization.name }}</span>
+                                                    </p>
+                                                </div>
+                                                <div class="text-end">
+                                                    <p class="mb-0 small">
+                                                        <strong>{{ treatment.treatment_date.strftime('%d %b %Y') }}</strong>
+                                                    </p>
+                                                    <p class="text-muted small mb-0">
+                                                        {{ treatment.treatment_date.strftime('%I:%M %p') }}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Treatment Details -->
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="text-muted small d-block">Diagnosis</label>
+                                                    <p class="mb-0">{{ treatment.diagnosis }}</p>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label class="text-muted small d-block">Prescription</label>
+                                                    <p class="mb-0">{{ treatment.prescription[:100] }}{% if treatment.prescription|length > 100 %}...{% endif %}</p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Action Button -->
+                                            <div class="mt-2">
+                                                <a href="{{ url_for('patient.view_treatment', treatment_id=treatment.id) }}"
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-eye"></i> View Full Details
+                                                </a>
+                                                <a href="{{ url_for('patient.view_appointment', appointment_id=treatment.appointment.id) }}"
+                                                   class="btn btn-sm btn-outline-info">
+                                                    <i class="bi bi-calendar"></i> View Appointment
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mt-3">
+                            <p class="text-muted text-center">
+                                Showing {{ treatments|length }} treatment record(s)
+                            </p>
+                        </div>
+                    {% else %}
+                        <div class="empty-state py-5">
+                            <i class="bi bi-clipboard-x"></i>
+                            <h5>No Treatment History</h5>
+                            <p class="text-muted">You don't have any completed treatments yet</p>
+                            <a href="{{ url_for('patient.search_doctors') }}" class="btn btn-primary">
+                                <i class="bi bi-search"></i> Book Your First Consultation
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

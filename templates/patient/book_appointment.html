@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}Book Appointment - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('patient.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('patient.search_doctors') }}">Find Doctors</a></li>
+                    <li class="breadcrumb-item active">Book Appointment</li>
+                </ol>
+            </nav>
+            <h1 class="display-6 fw-bold">
+                <i class="bi bi-calendar-plus text-success"></i> Book Appointment
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Doctor Summary -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0">Doctor Details</h6>
+                </div>
+                <div class="card-body text-center">
+                    <div class="avatar-large mx-auto mb-3">
+                        {{ doctor.name[0] }}
+                    </div>
+                    <h5 class="mb-1">Dr. {{ doctor.name }}</h5>
+                    <p class="text-muted small">{{ doctor.qualification }}</p>
+                    <span class="badge bg-primary mb-3">{{ doctor.specialization.name }}</span>
+
+                    <hr>
+
+                    <div class="text-start">
+                        {% if doctor.experience_years %}
+                        <p class="mb-2 small">
+                            <i class="bi bi-briefcase text-muted"></i>
+                            <strong>{{ doctor.experience_years }}</strong> years experience
+                        </p>
+                        {% endif %}
+                        {% if doctor.consultation_fee %}
+                        <p class="mb-2 small">
+                            <i class="bi bi-currency-rupee text-muted"></i>
+                            Fee: <strong>₹{{ doctor.consultation_fee }}</strong>
+                        </p>
+                        {% endif %}
+                        <p class="mb-0 small">
+                            <i class="bi bi-telephone text-muted"></i>
+                            {{ doctor.contact_number }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Form -->
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('patient.book_appointment', doctor_id=doctor.id) }}" novalidate>
+                        <div class="row">
+                            <!-- Date Selection -->
+                            <div class="col-12 mb-4">
+                                <label for="appointment_date" class="form-label">
+                                    <i class="bi bi-calendar-date"></i> Appointment Date <span class="text-danger">*</span>
+                                </label>
+                                <input type="date"
+                                       class="form-control form-control-lg"
+                                       id="appointment_date"
+                                       name="appointment_date"
+                                       value="{{ form_data.appointment_date if form_data else '' }}"
+                                       min="{{ min_date }}"
+                                       max="{{ max_date }}"
+                                       required>
+                                <small class="text-muted">Select from next 7 days</small>
+                            </div>
+
+                            <!-- Time Selection -->
+                            <div class="col-12 mb-4">
+                                <label for="appointment_time" class="form-label">
+                                    <i class="bi bi-clock"></i> Appointment Time <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select form-select-lg"
+                                        id="appointment_time"
+                                        name="appointment_time"
+                                        required>
+                                    <option value="">Select time slot</option>
+                                </select>
+                                <small class="text-muted">Available time slots will appear after selecting date</small>
+                            </div>
+
+                            <!-- Notes (Optional) -->
+                            <div class="col-12 mb-4">
+                                <label for="notes" class="form-label">
+                                    <i class="bi bi-journal-text"></i> Additional Notes <small class="text-muted">(Optional)</small>
+                                </label>
+                                <textarea class="form-control"
+                                          id="notes"
+                                          name="notes"
+                                          rows="3"
+                                          placeholder="Any specific concerns or symptoms...">{{ form_data.notes if form_data else '' }}</textarea>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="col-12">
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-success btn-lg" id="submitBtn" disabled>
+                                        <i class="bi bi-check-circle"></i> Confirm Booking
+                                    </button>
+                                    <a href="{{ url_for('patient.view_doctor', doctor_id=doctor.id) }}"
+                                       class="btn btn-outline-secondary btn-lg">
+                                        <i class="bi bi-x-circle"></i> Cancel
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Important Information -->
+            <div class="alert alert-info mt-3">
+                <h6 class="alert-heading"><i class="bi bi-info-circle"></i> Important Information</h6>
+                <ul class="mb-0 small">
+                    <li>Appointments can be booked up to 7 days in advance</li>
+                    <li>Please arrive 10 minutes before your appointment time</li>
+                    <li>You can cancel appointments up to 1 hour before the scheduled time</li>
+                    <li>Bring any relevant medical reports to the consultation</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Available slots data from server
+    const availableSlots = {{ availability_json|tojson|safe }};
+
+    const dateInput = document.getElementById('appointment_date');
+    const timeSelect = document.getElementById('appointment_time');
+    const submitBtn = document.getElementById('submitBtn');
+
+    dateInput.addEventListener('change', function() {
+        const selectedDate = this.value;
+        timeSelect.innerHTML = '<option value="">Select time slot</option>';
+        submitBtn.disabled = true;
+
+        if (selectedDate && availableSlots[selectedDate]) {
+            availableSlots[selectedDate].forEach(slot => {
+                const option = document.createElement('option');
+                option.value = slot.start_time;
+                option.textContent = `${slot.start_time} - ${slot.end_time}`;
+                timeSelect.appendChild(option);
+            });
+        } else if (selectedDate) {
+            timeSelect.innerHTML = '<option value="">No slots available for this date</option>';
+        }
+    });
+
+    timeSelect.addEventListener('change', function() {
+        submitBtn.disabled = !this.value;
+    });
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Treatment Details - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('patient.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('patient.treatment_history') }}">Treatment History</a></li>
+                    <li class="breadcrumb-item active">Treatment Details</li>
+                </ol>
+            </nav>
+            <h1 class="display-6 fw-bold">
+                <i class="bi bi-clipboard-pulse text-success"></i> Treatment Record
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Summary Card -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-clipboard-check text-success" style="font-size: 3rem;"></i>
+                    </div>
+                    <h6 class="text-center mb-3">Treatment Information</h6>
+
+                    <div class="mb-2">
+                        <small class="text-muted">Treatment ID</small>
+                        <p class="mb-0"><strong>#{{ treatment.id }}</strong></p>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted">Date</small>
+                        <p class="mb-0"><strong>{{ treatment.treatment_date.strftime('%d %B %Y') }}</strong></p>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted">Time</small>
+                        <p class="mb-0">{{ treatment.treatment_date.strftime('%I:%M %p') }}</p>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('patient.view_appointment', appointment_id=treatment.appointment.id) }}"
+                           class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-calendar"></i> View Appointment
+                        </a>
+                        <a href="{{ url_for('patient.treatment_history') }}"
+                           class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-arrow-left"></i> Back to History
+                        </a>
+                        <button onclick="window.print()" class="btn btn-outline-info btn-sm">
+                            <i class="bi bi-printer"></i> Print Record
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Treatment Details -->
+        <div class="col-lg-8">
+            <!-- Doctor Information -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-person-badge text-info"></i> Treated By</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-large me-3">
+                            {{ treatment.appointment.doctor.name[0] }}
+                        </div>
+                        <div>
+                            <h5 class="mb-0">Dr. {{ treatment.appointment.doctor.name }}</h5>
+                            <p class="text-muted mb-0">{{ treatment.appointment.doctor.qualification }}</p>
+                            <span class="badge bg-primary mt-1">{{ treatment.appointment.doctor.specialization.name }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diagnosis -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-activity text-danger"></i> Diagnosis</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">{{ treatment.diagnosis }}</p>
+                </div>
+            </div>
+
+            <!-- Prescription -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-capsule text-primary"></i> Prescription</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info mb-0" style="white-space: pre-wrap;">{{ treatment.prescription }}</div>
+                </div>
+            </div>
+
+            <!-- Additional Notes -->
+            {% if treatment.notes %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-journal-text text-warning"></i> Additional Notes</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0" style="white-space: pre-wrap;">{{ treatment.notes }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Important Notice -->
+            <div class="alert alert-warning mt-4">
+                <h6 class="alert-heading"><i class="bi bi-exclamation-triangle"></i> Important</h6>
+                <ul class="mb-0 small">
+                    <li>Follow the prescribed medication dosage strictly</li>
+                    <li>Complete the full course of medication</li>
+                    <li>Contact your doctor if symptoms persist or worsen</li>
+                    <li>Keep this prescription for future reference</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media print {
+        .btn, nav, .alert {
+            display: none !important;
+        }
+        .card {
+            border: 1px solid #ddd !important;
+            box-shadow: none !important;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Specializations - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-6 fw-bold">
+                <i class="bi bi-hospital text-primary"></i> Medical Specializations
+            </h1>
+            <p class="text-muted">Browse doctors by their area of specialization</p>
+        </div>
+    </div>
+
+    <!-- Specializations Grid -->
+    <div class="row">
+        {% if specializations %}
+            {% for spec in specializations %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <a href="{{ url_for('patient.doctors_by_specialization', spec_id=spec.id) }}"
+                   class="card h-100 border-0 shadow-sm hover-lift text-decoration-none">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="flex-shrink-0 me-3">
+                                <i class="bi bi-hospital text-primary" style="font-size: 2.5rem;"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h5 class="mb-2">{{ spec.name }}</h5>
+                                <span class="badge bg-primary">{{ spec.doctors|length }} Doctor(s)</span>
+                            </div>
+                        </div>
+                        <p class="text-muted mb-0">{{ spec.description }}</p>
+                    </div>
+                    <div class="card-footer bg-light border-0">
+                        <small class="text-primary">
+                            View Doctors <i class="bi bi-arrow-right"></i>
+                        </small>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="empty-state py-5">
+                    <i class="bi bi-hospital"></i>
+                    <h5>No Specializations Available</h5>
+                    <p class="text-muted">Check back later for available specializations</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

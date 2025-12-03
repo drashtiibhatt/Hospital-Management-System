@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Doctor Profile - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('patient.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('patient.search_doctors') }}">Find Doctors</a></li>
+                    <li class="breadcrumb-item active">Doctor Profile</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Doctor Profile Card -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="avatar-large mx-auto mb-3">
+                        {{ doctor.name[0] }}
+                    </div>
+                    <h3 class="mb-1">Dr. {{ doctor.name }}</h3>
+                    <p class="text-muted">{{ doctor.qualification }}</p>
+                    <span class="badge bg-primary mb-3">{{ doctor.specialization.name }}</span>
+
+                    {% if doctor.user.is_active %}
+                        <span class="badge bg-success mb-3">
+                            <i class="bi bi-check-circle"></i> Available
+                        </span>
+                    {% else %}
+                        <span class="badge bg-danger mb-3">
+                            <i class="bi bi-x-circle"></i> Not Available
+                        </span>
+                    {% endif %}
+
+                    <div class="d-grid gap-2 mt-3">
+                        <a href="{{ url_for('patient.book_appointment', doctor_id=doctor.id) }}"
+                           class="btn btn-success btn-lg">
+                            <i class="bi bi-calendar-plus"></i> Book Appointment
+                        </a>
+                        <a href="{{ url_for('patient.search_doctors') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Search
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Doctor Information -->
+        <div class="col-lg-8">
+            <!-- Professional Details -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person-badge text-success"></i> Professional Details
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Specialization</label>
+                            <p><span class="badge bg-primary fs-6">{{ doctor.specialization.name }}</span></p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Qualification</label>
+                            <p class="fw-bold">{{ doctor.qualification }}</p>
+                        </div>
+                        {% if doctor.experience_years %}
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Experience</label>
+                            <p class="fw-bold">
+                                <i class="bi bi-briefcase text-primary"></i>
+                                {{ doctor.experience_years }} years
+                            </p>
+                        </div>
+                        {% endif %}
+                        {% if doctor.consultation_fee %}
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Consultation Fee</label>
+                            <p class="fw-bold">
+                                <i class="bi bi-currency-rupee text-success"></i>
+                                ₹{{ doctor.consultation_fee }}
+                            </p>
+                        </div>
+                        {% endif %}
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Contact</label>
+                            <p class="fw-bold">
+                                <i class="bi bi-telephone"></i>
+                                {{ doctor.contact_number }}
+                            </p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">License Number</label>
+                            <p class="fw-bold"><code>{{ doctor.license_number }}</code></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Biography -->
+            {% if doctor.bio %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-journal-text text-info"></i> About
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>{{ doctor.bio }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Availability -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clock text-warning"></i> Available Time Slots
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if available_slots %}
+                        <p class="text-muted mb-3">Next available slots (next 7 days):</p>
+                        <div class="row">
+                            {% for slot in available_slots[:6] %}
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-light">
+                                    <div class="card-body py-2">
+                                        <p class="mb-0">
+                                            <i class="bi bi-calendar"></i>
+                                            <strong>{{ slot.available_date.strftime('%d %b %Y') }}</strong>
+                                        </p>
+                                        <p class="mb-0 small text-muted">
+                                            <i class="bi bi-clock"></i>
+                                            {{ slot.start_time.strftime('%I:%M %p') }} -
+                                            {{ slot.end_time.strftime('%I:%M %p') }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="{{ url_for('patient.book_appointment', doctor_id=doctor.id) }}"
+                               class="btn btn-success">
+                                <i class="bi bi-calendar-plus"></i> Book Now
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="empty-state py-3">
+                            <i class="bi bi-calendar-x"></i>
+                            <p class="text-muted mb-0">No available slots at the moment</p>
+                            <small class="text-muted">Please check back later</small>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

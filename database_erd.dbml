@@ -1,0 +1,264 @@
+// Hospital Management System - Database Schema
+// For use with dbdiagram.io
+// Last Updated: 2025-11-29
+
+Project hospital_management_system {
+  database_type: 'SQLite'
+  Note: '''
+    # Hospital Management System Database
+    A comprehensive database schema for managing hospital operations including
+    patients, doctors, appointments, and medical records.
+
+    **Features:**
+    - Role-based access (Admin, Doctor, Patient)
+    - Appointment scheduling with conflict prevention
+    - Treatment history tracking
+    - Doctor availability management
+  '''
+}
+
+// ==================== BASE AUTHENTICATION TABLE ====================
+
+Table users {
+  id integer [pk, increment, note: 'Unique user identifier']
+  username varchar(80) [unique, not null, note: 'User login name']
+  email varchar(120) [unique, not null, note: 'User email address']
+  password_hash varchar(255) [not null, note: 'Bcrypt hashed password']
+  role varchar(20) [not null, note: 'User role: admin/doctor/patient']
+  is_active boolean [default: true, note: 'Account status (blacklisting)']
+  created_at datetime [default: `CURRENT_TIMESTAMP`, note: 'Account creation date']
+
+  Note: 'Base authentication table for all user types'
+  indexes {
+    username
+    email
+  }
+}
+
+// ==================== ROLE-SPECIFIC TABLES ====================
+
+Table admin {
+  id integer [pk, increment, note: 'Unique admin identifier']
+  user_id integer [unique, not null, ref: - users.id, note: 'One-to-one with users']
+  name varchar(100) [not null, note: 'Admin full name']
+  contact_number varchar(15) [note: 'Admin contact number']
+
+  Note: 'Admin-specific information extending users table'
+}
+
+Table specialization {
+  id integer [pk, increment, note: 'Unique specialization ID']
+  name varchar(100) [unique, not null, note: 'Specialization name (e.g., Cardiology)']
+  description text [note: 'Department description']
+
+  Note: '''
+    Medical departments and specializations
+
+    Sample Data:
+    - Cardiology
+    - Neurology
+    - Orthopedics
+    - Pediatrics
+    - Dermatology
+    - General Medicine
+    - ENT
+    - Gynecology
+  '''
+}
+
+Table doctor {
+  id integer [pk, increment, note: 'Unique doctor identifier']
+  user_id integer [unique, not null, ref: - users.id, note: 'One-to-one with users']
+  name varchar(100) [not null, note: 'Doctor full name']
+  specialization_id integer [not null, ref: > specialization.id, note: 'Medical specialization']
+  qualification varchar(200) [note: 'Degrees and certifications']
+  experience_years integer [note: 'Years of medical experience']
+  contact_number varchar(15) [note: 'Doctor contact number']
+  profile_image varchar(255) [note: 'Profile picture path (optional)']
+  consultation_fee decimal(10,2) [note: 'Consultation charges']
+
+  Note: 'Doctor-specific information with specialization'
+  indexes {
+    specialization_id
+  }
+}
+
+Table patient {
+  id integer [pk, increment, note: 'Unique patient identifier']
+  user_id integer [unique, not null, ref: - users.id, note: 'One-to-one with users']
+  name varchar(100) [not null, note: 'Patient full name']
+  date_of_birth date [note: 'Patient date of birth']
+  gender varchar(10) [note: 'Male/Female/Other']
+  contact_number varchar(15) [not null, note: 'Patient contact number']
+  address text [note: 'Residential address']
+  blood_group varchar(5) [note: 'Blood type (A+, B-, O+, etc.)']
+  emergency_contact varchar(15) [note: 'Emergency contact number']
+
+  Note: 'Patient-specific medical and contact information'
+}
+
+// ==================== APPOINTMENT & AVAILABILITY TABLES ====================
+
+Table doctor_availability {
+  id integer [pk, increment, note: 'Unique availability record']
+  doctor_id integer [not null, ref: > doctor.id, note: 'Doctor reference']
+  available_date date [not null, note: 'Date when doctor is available']
+  start_time time [not null, note: 'Availability start time']
+  end_time time [not null, note: 'Availability end time']
+  is_available boolean [default: true, note: 'Availability status']
+
+  Note: '''
+    Doctor availability schedule for next 7 days
+    - Doctors can set multiple time slots per day
+    - Used for preventing double-booking
+  '''
+  indexes {
+    (doctor_id, available_date) [name: 'idx_doctor_availability']
+  }
+}
+
+Table appointment {
+  id integer [pk, increment, note: 'Unique appointment ID']
+  patient_id integer [not null, ref: > patient.id, note: 'Patient who booked']
+  doctor_id integer [not null, ref: > doctor.id, note: 'Doctor for appointment']
+  appointment_date date [not null, note: 'Scheduled appointment date']
+  appointment_time time [not null, note: 'Scheduled appointment time']
+  status varchar(20) [not null, default: 'Booked', note: 'Booked/Completed/Cancelled']
+  booking_date datetime [default: `CURRENT_TIMESTAMP`, note: 'When booking was made']
+  cancellation_reason text [note: 'Reason if cancelled (optional)']
+
+  Note: '''
+    Appointment booking records with conflict prevention
+
+    Status Flow:
+    - Booked → Completed (after treatment)
+    - Booked → Cancelled (by patient or doctor)
+
+    Constraints:
+    - UNIQUE(doctor_id, appointment_date, appointment_time)
+      where status='Booked' prevents double-booking
+  '''
+  indexes {
+    doctor_id [name: 'idx_appointment_doctor']
+    patient_id [name: 'idx_appointment_patient']
+    appointment_date [name: 'idx_appointment_date']
+    (doctor_id, appointment_date, appointment_time) [unique, name: 'idx_no_double_booking']
+  }
+}
+
+// ==================== MEDICAL RECORDS TABLE ====================
+
+Table treatment {
+  id integer [pk, increment, note: 'Unique treatment record ID']
+  appointment_id integer [unique, not null, ref: - appointment.id, note: 'One treatment per appointment']
+  diagnosis text [not null, note: 'Medical diagnosis by doctor']
+  prescription text [note: 'Prescribed medications and dosage']
+  notes text [note: 'Additional doctor notes']
+  treatment_date datetime [default: `CURRENT_TIMESTAMP`, note: 'When treatment was recorded']
+
+  Note: '''
+    Medical treatment records
+    - One treatment record per completed appointment
+    - Created when doctor marks appointment as "Completed"
+    - Contains diagnosis, prescription, and notes
+  '''
+}
+
+// ==================== RELATIONSHIP DOCUMENTATION ====================
+
+// User Inheritance Relationships (One-to-One)
+// - users (1) ←→ (1) admin
+// - users (1) ←→ (1) doctor
+// - users (1) ←→ (1) patient
+
+// Doctor Relationships
+// - specialization (1) ←→ (N) doctor
+// - doctor (1) ←→ (N) doctor_availability
+// - doctor (1) ←→ (N) appointment
+
+// Patient Relationships
+// - patient (1) ←→ (N) appointment
+
+// Appointment Relationships
+// - appointment (1) ←→ (1) treatment
+
+// ==================== TABLE GROUPS FOR VISUALIZATION ====================
+
+TableGroup user_management {
+  users
+  admin
+  doctor
+  patient
+
+  Note: 'User authentication and role-based access'
+}
+
+TableGroup medical_data {
+  specialization
+  doctor_availability
+
+  Note: 'Medical specializations and doctor schedules'
+}
+
+TableGroup appointment_system {
+  appointment
+  treatment
+
+  Note: 'Appointment booking and treatment records'
+}
+
+// ==================== ENUM DEFINITIONS ====================
+
+Enum user_role {
+  admin [note: 'Hospital administrator with full system access']
+  doctor [note: 'Medical professional managing appointments']
+  patient [note: 'Patient booking appointments']
+}
+
+Enum appointment_status {
+  Booked [note: 'Appointment scheduled and confirmed']
+  Completed [note: 'Appointment finished with treatment']
+  Cancelled [note: 'Appointment cancelled by patient or doctor']
+}
+
+Enum gender {
+  Male
+  Female
+  Other
+}
+
+// ==================== NOTES ====================
+
+Note database_info {
+  '''
+  # Hospital Management System Database
+
+  ## Overview
+  This database schema supports a complete hospital management system with:
+  - User authentication (Admin, Doctor, Patient)
+  - Doctor specialization and availability tracking
+  - Appointment scheduling with double-booking prevention
+  - Treatment and medical record management
+
+  ## Key Features
+  1. **Role-Based Access**: Three distinct user types with specific permissions
+  2. **Conflict Prevention**: Unique constraints prevent appointment conflicts
+  3. **Medical History**: Complete treatment records linked to appointments
+  4. **Availability System**: Doctors manage their 7-day schedules
+
+  ## Technology
+  - Database: SQLite 3.x
+  - ORM: SQLAlchemy (Flask)
+  - Security: Bcrypt password hashing
+
+  ## Total Tables: 8
+  - users (base authentication)
+  - admin, doctor, patient (role-specific)
+  - specialization (medical departments)
+  - doctor_availability (schedules)
+  - appointment (bookings)
+  - treatment (medical records)
+
+  ## Last Updated: 2025-11-29
+  '''
+}

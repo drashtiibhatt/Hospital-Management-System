@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Hospital Management System{% endblock %}
+
+{% block content %}
+<section class="login-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-body p-5">
+                        <!-- Header -->
+                        <div class="text-center mb-4">
+                            <div class="mb-3">
+                                <i class="bi bi-hospital text-primary" style="font-size: 3rem;"></i>
+                            </div>
+                            <h2 class="fw-bold">Welcome Back</h2>
+                            <p class="text-muted">Login to your account</p>
+                        </div>
+
+                        <!-- Login Form -->
+                        <form method="POST" action="{{ url_for('auth.login') }}" novalidate>
+                            <!-- Username -->
+                            <div class="mb-3">
+                                <label for="username" class="form-label">
+                                    <i class="bi bi-person"></i> Username
+                                </label>
+                                <input type="text"
+                                       class="form-control form-control-lg"
+                                       id="username"
+                                       name="username"
+                                       placeholder="Enter your username"
+                                       required
+                                       autofocus>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="mb-3">
+                                <label for="password" class="form-label">
+                                    <i class="bi bi-lock"></i> Password
+                                </label>
+                                <input type="password"
+                                       class="form-control form-control-lg"
+                                       id="password"
+                                       name="password"
+                                       placeholder="Enter your password"
+                                       required>
+                            </div>
+
+                            <!-- Remember Me & Forgot Password -->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           id="remember"
+                                           name="remember">
+                                    <label class="form-check-label" for="remember">
+                                        Remember me
+                                    </label>
+                                </div>
+                                <a href="{{ url_for('auth.forgot_password') }}" class="text-decoration-none">
+                                    Forgot Password?
+                                </a>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-box-arrow-in-right"></i> Login
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Default Credentials Info -->
+                        <div class="alert alert-info mt-4 mb-0" role="alert">
+                            <strong><i class="bi bi-info-circle"></i> Default Admin Credentials:</strong><br>
+                            <small>
+                                Username: <code>admin</code><br>
+                                Password: <code>admin123</code>
+                            </small>
+                        </div>
+
+                        <!-- Register Link -->
+                        <div class="text-center mt-4">
+                            <p class="mb-0">
+                                Don't have an account?
+                                <a href="{{ url_for('auth.register') }}" class="text-decoration-none fw-bold">
+                                    Register here
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Demo Login -->
+                <div class="card border-0 shadow-sm mt-3">
+                    <div class="card-body">
+                        <h6 class="card-title text-center mb-3">
+                            <i class="bi bi-lightning-charge text-warning"></i> Quick Demo Login
+                        </h6>
+                        <p class="text-center small text-muted mb-3">Click to auto-fill credentials</p>
+                        <div class="row text-center g-2">
+                            <div class="col-4">
+                                <div class="demo-role-card p-3 rounded-3 cursor-pointer" onclick="fillDemoCredentials('admin', 'admin123')">
+                                    <i class="bi bi-shield-check text-danger" style="font-size: 2rem;"></i>
+                                    <p class="mb-0 small mt-2"><strong>Admin</strong></p>
+                                    <p class="mb-0 small text-muted">Manage System</p>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="demo-role-card p-3 rounded-3 cursor-pointer" onclick="fillDemoCredentials('doctor', 'doctor123')">
+                                    <i class="bi bi-person-badge text-success" style="font-size: 2rem;"></i>
+                                    <p class="mb-0 small mt-2"><strong>Doctor</strong></p>
+                                    <p class="mb-0 small text-muted">Treat Patients</p>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="demo-role-card p-3 rounded-3 cursor-pointer" onclick="fillDemoCredentials('patient', 'patient123')">
+                                    <i class="bi bi-person text-info" style="font-size: 2rem;"></i>
+                                    <p class="mb-0 small mt-2"><strong>Patient</strong></p>
+                                    <p class="mb-0 small text-muted">Book Appointments</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .login-section {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+    .card {
+        animation: fadeInUp 0.6s ease;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .form-control:focus {
+        box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+        border-color: #667eea;
+    }
+
+    .demo-role-card {
+        background: #f8f9fa;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+
+    .demo-role-card:hover {
+        background: #e9ecef;
+        border-color: #667eea;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .cursor-pointer {
+        cursor: pointer;
+    }
+</style>
+
+<script>
+function fillDemoCredentials(username, password) {
+    // Fill in the credentials
+    document.getElementById('username').value = username;
+    document.getElementById('password').value = password;
+
+    // Add a visual feedback
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+
+    usernameInput.classList.add('border-success');
+    passwordInput.classList.add('border-success');
+
+    // Focus on submit button
+    document.querySelector('button[type="submit"]').focus();
+
+    // Show success message
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-success alert-dismissible fade show mt-3';
+    alertDiv.innerHTML = `
+        <i class="bi bi-check-circle"></i> Demo credentials filled!
+        <strong>${username.charAt(0).toUpperCase() + username.slice(1)}</strong> login ready.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+
+    document.querySelector('form').insertAdjacentElement('afterend', alertDiv);
+
+    // Remove after 3 seconds
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 3000);
+}
+</script>
+{% endblock %}

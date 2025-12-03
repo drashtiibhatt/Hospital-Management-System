@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}500 - Server Error{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row min-vh-100 align-items-center justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="error-page">
+                <!-- Error Icon -->
+                <div class="mb-4">
+                    <i class="bi bi-exclamation-triangle text-danger" style="font-size: 8rem;"></i>
+                </div>
+
+                <!-- Error Code -->
+                <h1 class="display-1 fw-bold text-danger mb-3">500</h1>
+
+                <!-- Error Title -->
+                <h2 class="mb-3">Internal Server Error</h2>
+
+                <!-- Error Description -->
+                <p class="text-muted mb-4 fs-5">
+                    Something went wrong on our end. We're working to fix it!
+                </p>
+
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-octagon"></i>
+                    <strong>Server Error:</strong> An unexpected error occurred while processing your request.
+                </div>
+
+                <!-- What to do -->
+                <div class="card border-0 bg-light mb-4">
+                    <div class="card-body">
+                        <h6 class="mb-3">What you can do:</h6>
+                        <ul class="list-unstyled text-start mb-0">
+                            <li class="mb-2">
+                                <i class="bi bi-arrow-clockwise text-primary"></i>
+                                Try refreshing the page
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-clock-history text-primary"></i>
+                                Wait a few moments and try again
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-arrow-left text-primary"></i>
+                                Go back to the previous page
+                            </li>
+                            <li>
+                                <i class="bi bi-envelope text-primary"></i>
+                                Contact support if the problem persists
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-2 justify-content-center mt-4">
+                    <button onclick="location.reload()" class="btn btn-outline-primary btn-lg">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh Page
+                    </button>
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary btn-lg">
+                        <i class="bi bi-arrow-left"></i> Go Back
+                    </a>
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.role == 'admin' %}
+                            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-house"></i> Dashboard
+                            </a>
+                        {% elif current_user.role == 'doctor' %}
+                            <a href="{{ url_for('doctor.dashboard') }}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-house"></i> Dashboard
+                            </a>
+                        {% elif current_user.role == 'patient' %}
+                            <a href="{{ url_for('patient.dashboard') }}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-house"></i> Dashboard
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-house"></i> Go Home
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- Additional Help -->
+                <div class="mt-5">
+                    <p class="text-muted small">
+                        Error Code: 500 | Internal Server Error<br>
+                        If this problem persists, please contact the system administrator.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .error-page {
+        animation: fadeInUp 0.6s ease;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .card {
+        animation: slideIn 0.8s ease 0.3s both;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+</style>
+{% endblock %}

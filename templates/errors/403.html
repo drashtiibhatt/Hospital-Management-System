@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}403 - Access Denied{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row min-vh-100 align-items-center justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="error-page">
+                <!-- Error Icon -->
+                <div class="mb-4">
+                    <i class="bi bi-shield-lock text-danger" style="font-size: 8rem;"></i>
+                </div>
+
+                <!-- Error Code -->
+                <h1 class="display-1 fw-bold text-danger mb-3">403</h1>
+
+                <!-- Error Title -->
+                <h2 class="mb-3">Access Denied</h2>
+
+                <!-- Error Description -->
+                <p class="text-muted mb-4 fs-5">
+                    Sorry, you don't have permission to access this page.
+                </p>
+
+                <div class="alert alert-warning" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <strong>Access Restricted:</strong> This page requires specific privileges that your account doesn't have.
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-2 justify-content-center mt-4">
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary btn-lg">
+                        <i class="bi bi-arrow-left"></i> Go Back
+                    </a>
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.role == 'admin' %}
+                            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-house"></i> Go to Dashboard
+                            </a>
+                        {% elif current_user.role == 'doctor' %}
+                            <a href="{{ url_for('doctor.dashboard') }}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-house"></i> Go to Dashboard
+                            </a>
+                        {% elif current_user.role == 'patient' %}
+                            <a href="{{ url_for('patient.dashboard') }}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-house"></i> Go to Dashboard
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-house"></i> Go Home
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- Additional Help -->
+                <div class="mt-5">
+                    <p class="text-muted small">
+                        If you believe this is an error, please contact the system administrator.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .error-page {
+        animation: fadeInUp 0.6s ease;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}

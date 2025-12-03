@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}{{ specialization.name }} Doctors - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('patient.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('patient.view_specializations') }}">Specializations</a></li>
+                    <li class="breadcrumb-item active">{{ specialization.name }}</li>
+                </ol>
+            </nav>
+            <h1 class="display-6 fw-bold">
+                <i class="bi bi-hospital text-primary"></i> {{ specialization.name }}
+            </h1>
+            <p class="text-muted">{{ specialization.description }}</p>
+        </div>
+    </div>
+
+    <!-- Doctors Grid -->
+    <div class="row">
+        {% if doctors %}
+            {% for doctor in doctors %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="avatar-large me-3">
+                                {{ doctor.name[0] }}
+                            </div>
+                            <div class="flex-grow-1">
+                                <h5 class="mb-1">Dr. {{ doctor.name }}</h5>
+                                <p class="text-muted small mb-0">{{ doctor.qualification }}</p>
+                                {% if doctor.user.is_active %}
+                                    <span class="badge bg-success mt-1">Available</span>
+                                {% else %}
+                                    <span class="badge bg-danger mt-1">Not Available</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {% if doctor.experience_years %}
+                            <p class="mb-1 small">
+                                <i class="bi bi-briefcase text-muted"></i>
+                                <strong>{{ doctor.experience_years }}</strong> years experience
+                            </p>
+                            {% endif %}
+                            {% if doctor.consultation_fee %}
+                            <p class="mb-1 small">
+                                <i class="bi bi-currency-rupee text-muted"></i>
+                                Consultation: <strong>₹{{ doctor.consultation_fee }}</strong>
+                            </p>
+                            {% endif %}
+                            <p class="mb-0 small">
+                                <i class="bi bi-telephone text-muted"></i>
+                                {{ doctor.contact_number }}
+                            </p>
+                        </div>
+
+                        {% if doctor.bio %}
+                        <p class="text-muted small mb-3">
+                            {{ doctor.bio[:100] }}{% if doctor.bio|length > 100 %}...{% endif %}
+                        </p>
+                        {% endif %}
+
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('patient.view_doctor', doctor_id=doctor.id) }}"
+                               class="btn btn-primary">
+                                <i class="bi bi-eye"></i> View Profile
+                            </a>
+                            {% if doctor.user.is_active %}
+                                <a href="{{ url_for('patient.book_appointment', doctor_id=doctor.id) }}"
+                                   class="btn btn-outline-success">
+                                    <i class="bi bi-calendar-plus"></i> Book Appointment
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="col-12">
+                <p class="text-muted text-center mt-3">
+                    Showing {{ doctors|length }} {{ specialization.name }} doctor(s)
+                </p>
+            </div>
+        {% else %}
+            <div class="col-12">
+                <div class="empty-state py-5">
+                    <i class="bi bi-person-x"></i>
+                    <h5>No Doctors Available</h5>
+                    <p class="text-muted">No doctors found in this specialization</p>
+                    <a href="{{ url_for('patient.search_doctors') }}" class="btn btn-primary">
+                        <i class="bi bi-search"></i> Browse All Doctors
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

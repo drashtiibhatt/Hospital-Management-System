@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Availability - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-6 fw-bold">
+                <i class="bi bi-clock text-info"></i> Manage Availability
+            </h1>
+            <p class="text-muted">Set your available time slots for the next 7 days</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ url_for('doctor.add_availability') }}" class="btn btn-primary btn-lg">
+                <i class="bi bi-plus-circle"></i> Add Time Slot
+            </a>
+        </div>
+    </div>
+
+    <!-- Availability Calendar -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    {% if availabilities %}
+                        {% set grouped_availability = {} %}
+                        {% for avail in availabilities %}
+                            {% set date_key = avail.available_date.strftime('%Y-%m-%d') %}
+                            {% if date_key not in grouped_availability %}
+                                {% set _ = grouped_availability.update({date_key: []}) %}
+                            {% endif %}
+                            {% set _ = grouped_availability[date_key].append(avail) %}
+                        {% endfor %}
+
+                        <div class="accordion" id="availabilityAccordion">
+                            {% for date_str, slots in grouped_availability.items() %}
+                            {% set date_obj = slots[0].available_date %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button {% if not loop.first %}collapsed{% endif %}"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#date-{{ loop.index }}">
+                                        <div class="d-flex justify-content-between w-100 pe-3">
+                                            <span>
+                                                <i class="bi bi-calendar-date text-primary"></i>
+                                                <strong>{{ date_obj.strftime('%A, %d %B %Y') }}</strong>
+                                            </span>
+                                            <span class="badge bg-primary">{{ slots|length }} slot(s)</span>
+                                        </div>
+                                    </button>
+                                </h2>
+                                <div id="date-{{ loop.index }}"
+                                     class="accordion-collapse collapse {% if loop.first %}show{% endif %}"
+                                     data-bs-parent="#availabilityAccordion">
+                                    <div class="accordion-body">
+                                        <div class="row">
+                                            {% for slot in slots %}
+                                            <div class="col-md-6 col-lg-4 mb-3">
+                                                <div class="card {% if slot.is_available %}border-success{% else %}border-danger{% endif %}">
+                                                    <div class="card-body">
+                                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                                            <div>
+                                                                <h6 class="mb-0">
+                                                                    <i class="bi bi-clock"></i>
+                                                                    {{ slot.start_time.strftime('%I:%M %p') }} -
+                                                                    {{ slot.end_time.strftime('%I:%M %p') }}
+                                                                </h6>
+                                                            </div>
+                                                            {% if slot.is_available %}
+                                                                <span class="badge bg-success">Available</span>
+                                                            {% else %}
+                                                                <span class="badge bg-danger">Booked</span>
+                                                            {% endif %}
+                                                        </div>
+                                                        {% if slot.is_available %}
+                                                        <form method="POST"
+                                                              action="{{ url_for('doctor.delete_availability', availability_id=slot.id) }}"
+                                                              style="display: inline;"
+                                                              onsubmit="return confirm('Remove this time slot?');">
+                                                            <button type="submit"
+                                                                    class="btn btn-sm btn-outline-danger">
+                                                                <i class="bi bi-trash"></i> Remove
+                                                            </button>
+                                                        </form>
+                                                        {% else %}
+                                                        <p class="text-muted small mb-0">
+                                                            <i class="bi bi-info-circle"></i> This slot has been booked
+                                                        </p>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state py-5">
+                            <i class="bi bi-calendar-x"></i>
+                            <h5>No Availability Set</h5>
+                            <p class="text-muted">Add time slots to let patients book appointments</p>
+                            <a href="{{ url_for('doctor.add_availability') }}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Add Your First Time Slot
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Card -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <h6 class="alert-heading"><i class="bi bi-info-circle"></i> Important Notes</h6>
+                <ul class="mb-0">
+                    <li>You can set availability for the next 7 days only</li>
+                    <li>Time slots that are already booked cannot be deleted</li>
+                    <li>Patients can only book from your available time slots</li>
+                    <li>Make sure to update your availability regularly</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

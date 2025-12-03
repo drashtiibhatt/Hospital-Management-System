@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Add Availability - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('doctor.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('doctor.manage_availability') }}">Availability</a></li>
+                    <li class="breadcrumb-item active">Add Time Slot</li>
+                </ol>
+            </nav>
+            <h1 class="display-6 fw-bold">
+                <i class="bi bi-plus-circle text-primary"></i> Add Availability
+            </h1>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('doctor.add_availability') }}" novalidate>
+                        <!-- Date -->
+                        <div class="mb-3">
+                            <label for="available_date" class="form-label">
+                                <i class="bi bi-calendar-date"></i> Date <span class="text-danger">*</span>
+                            </label>
+                            <input type="date"
+                                   class="form-control form-control-lg"
+                                   id="available_date"
+                                   name="available_date"
+                                   value="{{ form_data.available_date if form_data else '' }}"
+                                   min="{{ min_date }}"
+                                   max="{{ max_date }}"
+                                   required>
+                            <small class="text-muted">You can set availability for the next 7 days</small>
+                        </div>
+
+                        <!-- Start Time -->
+                        <div class="mb-3">
+                            <label for="start_time" class="form-label">
+                                <i class="bi bi-clock"></i> Start Time <span class="text-danger">*</span>
+                            </label>
+                            <input type="time"
+                                   class="form-control form-control-lg"
+                                   id="start_time"
+                                   name="start_time"
+                                   value="{{ form_data.start_time if form_data else '' }}"
+                                   required>
+                        </div>
+
+                        <!-- End Time -->
+                        <div class="mb-4">
+                            <label for="end_time" class="form-label">
+                                <i class="bi bi-clock-fill"></i> End Time <span class="text-danger">*</span>
+                            </label>
+                            <input type="time"
+                                   class="form-control form-control-lg"
+                                   id="end_time"
+                                   name="end_time"
+                                   value="{{ form_data.end_time if form_data else '' }}"
+                                   required>
+                            <small class="text-muted">End time must be after start time</small>
+                        </div>
+
+                        <!-- Common Time Slot Buttons -->
+                        <div class="mb-4">
+                            <label class="form-label">Quick Select:</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTimeSlot('09:00', '12:00')">
+                                    Morning (9 AM - 12 PM)
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTimeSlot('14:00', '17:00')">
+                                    Afternoon (2 PM - 5 PM)
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setTimeSlot('18:00', '21:00')">
+                                    Evening (6 PM - 9 PM)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle"></i> Add Time Slot
+                            </button>
+                            <a href="{{ url_for('doctor.manage_availability') }}" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Help Card -->
+            <div class="alert alert-info mt-3">
+                <h6 class="alert-heading"><i class="bi bi-lightbulb"></i> Tips</h6>
+                <ul class="mb-0 small">
+                    <li>Set availability at least a day in advance</li>
+                    <li>Each time slot should be at least 30 minutes</li>
+                    <li>Avoid overlapping time slots on the same day</li>
+                    <li>You can add multiple slots for different times</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    function setTimeSlot(start, end) {
+        document.getElementById('start_time').value = start;
+        document.getElementById('end_time').value = end;
+    }
+
+    // Set min date to today
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateInput = document.getElementById('available_date');
+        const today = new Date().toISOString().split('T')[0];
+        if (!dateInput.value) {
+            dateInput.value = today;
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

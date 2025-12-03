@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block title %}Add Doctor - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin.manage_doctors') }}">Doctors</a></li>
+                    <li class="breadcrumb-item active">Add Doctor</li>
+                </ol>
+            </nav>
+            <h1 class="display-6 fw-bold">
+                <i class="bi bi-person-plus text-success"></i> Add New Doctor
+            </h1>
+        </div>
+    </div>
+
+    <!-- Add Doctor Form -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('admin.add_doctor') }}" novalidate>
+                        <div class="row">
+                            <!-- Account Information -->
+                            <div class="col-12 mb-4">
+                                <h5 class="border-bottom pb-2">
+                                    <i class="bi bi-key text-primary"></i> Account Information
+                                </h5>
+                            </div>
+
+                            <!-- Username -->
+                            <div class="col-md-6 mb-3">
+                                <label for="username" class="form-label">
+                                    Username <span class="text-danger">*</span>
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="username"
+                                       name="username"
+                                       value="{{ form_data.username if form_data else '' }}"
+                                       required
+                                       minlength="3">
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">
+                                    Email <span class="text-danger">*</span>
+                                </label>
+                                <input type="email"
+                                       class="form-control"
+                                       id="email"
+                                       name="email"
+                                       value="{{ form_data.email if form_data else '' }}"
+                                       required>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="col-md-6 mb-3">
+                                <label for="password" class="form-label">
+                                    Password <span class="text-danger">*</span>
+                                </label>
+                                <input type="password"
+                                       class="form-control"
+                                       id="password"
+                                       name="password"
+                                       required
+                                       minlength="6">
+                                <small class="text-muted">Minimum 6 characters</small>
+                            </div>
+
+                            <!-- Confirm Password -->
+                            <div class="col-md-6 mb-3">
+                                <label for="confirm_password" class="form-label">
+                                    Confirm Password <span class="text-danger">*</span>
+                                </label>
+                                <input type="password"
+                                       class="form-control"
+                                       id="confirm_password"
+                                       name="confirm_password"
+                                       required>
+                            </div>
+
+                            <div class="col-12"><hr class="my-3"></div>
+
+                            <!-- Professional Information -->
+                            <div class="col-12 mb-4">
+                                <h5 class="border-bottom pb-2">
+                                    <i class="bi bi-person-badge text-success"></i> Professional Information
+                                </h5>
+                            </div>
+
+                            <!-- Full Name -->
+                            <div class="col-12 mb-3">
+                                <label for="name" class="form-label">
+                                    Full Name <span class="text-danger">*</span>
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="name"
+                                       name="name"
+                                       value="{{ form_data.name if form_data else '' }}"
+                                       required>
+                            </div>
+
+                            <!-- Specialization -->
+                            <div class="col-md-6 mb-3">
+                                <label for="specialization_id" class="form-label">
+                                    Specialization <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select"
+                                        id="specialization_id"
+                                        name="specialization_id"
+                                        required>
+                                    <option value="">Select Specialization</option>
+                                    {% for spec in specializations %}
+                                        <option value="{{ spec.id }}"
+                                                {% if form_data and form_data.specialization_id == spec.id|string %}selected{% endif %}>
+                                            {{ spec.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- License Number -->
+                            <div class="col-md-6 mb-3">
+                                <label for="license_number" class="form-label">
+                                    Medical License Number <span class="text-danger">*</span>
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="license_number"
+                                       name="license_number"
+                                       value="{{ form_data.license_number if form_data else '' }}"
+                                       required>
+                            </div>
+
+                            <!-- Contact Number -->
+                            <div class="col-md-6 mb-3">
+                                <label for="contact_number" class="form-label">
+                                    Contact Number <span class="text-danger">*</span>
+                                </label>
+                                <input type="tel"
+                                       class="form-control"
+                                       id="contact_number"
+                                       name="contact_number"
+                                       value="{{ form_data.contact_number if form_data else '' }}"
+                                       pattern="[0-9]{10}"
+                                       required>
+                            </div>
+
+                            <!-- Qualification -->
+                            <div class="col-md-6 mb-3">
+                                <label for="qualification" class="form-label">
+                                    Qualification <span class="text-danger">*</span>
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="qualification"
+                                       name="qualification"
+                                       value="{{ form_data.qualification if form_data else '' }}"
+                                       placeholder="e.g., MBBS, MD"
+                                       required>
+                            </div>
+
+                            <!-- Experience -->
+                            <div class="col-md-6 mb-3">
+                                <label for="experience_years" class="form-label">
+                                    Experience (Years)
+                                </label>
+                                <input type="number"
+                                       class="form-control"
+                                       id="experience_years"
+                                       name="experience_years"
+                                       value="{{ form_data.experience_years if form_data else '' }}"
+                                       min="0"
+                                       max="50">
+                            </div>
+
+                            <!-- Consultation Fee -->
+                            <div class="col-md-6 mb-3">
+                                <label for="consultation_fee" class="form-label">
+                                    Consultation Fee (₹)
+                                </label>
+                                <input type="number"
+                                       class="form-control"
+                                       id="consultation_fee"
+                                       name="consultation_fee"
+                                       value="{{ form_data.consultation_fee if form_data else '' }}"
+                                       min="0"
+                                       step="0.01">
+                            </div>
+
+                            <!-- Bio -->
+                            <div class="col-12 mb-3">
+                                <label for="bio" class="form-label">
+                                    Biography
+                                </label>
+                                <textarea class="form-control"
+                                          id="bio"
+                                          name="bio"
+                                          rows="3"
+                                          placeholder="Brief professional biography...">{{ form_data.bio if form_data else '' }}</textarea>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="col-12">
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="bi bi-check-circle"></i> Add Doctor
+                                    </button>
+                                    <a href="{{ url_for('admin.manage_doctors') }}" class="btn btn-outline-secondary btn-lg">
+                                        <i class="bi bi-x-circle"></i> Cancel
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Password confirmation validation
+    document.getElementById('confirm_password').addEventListener('input', function() {
+        const password = document.getElementById('password').value;
+        if (password !== this.value) {
+            this.setCustomValidity('Passwords do not match');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

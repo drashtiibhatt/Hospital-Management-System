@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Complete Appointment - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('doctor.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('doctor.view_appointments') }}">Appointments</a></li>
+                    <li class="breadcrumb-item active">Complete Appointment</li>
+                </ol>
+            </nav>
+            <h1 class="display-6 fw-bold">
+                <i class="bi bi-clipboard-check text-success"></i> Complete Appointment
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Patient Summary -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0">Patient Summary</h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="avatar-large mx-auto mb-2">
+                            {{ appointment.patient.name[0] }}
+                        </div>
+                        <h5 class="mb-0">{{ appointment.patient.name }}</h5>
+                        <p class="text-muted small">ID: #{{ appointment.patient.id }}</p>
+                    </div>
+
+                    <div class="mb-2">
+                        <small class="text-muted">Age / Gender</small>
+                        <p class="mb-0"><strong>{{ appointment.patient.age }} years / {{ appointment.patient.gender }}</strong></p>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted">Blood Group</small>
+                        <p class="mb-0"><span class="badge bg-danger">{{ appointment.patient.blood_group }}</span></p>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted">Appointment</small>
+                        <p class="mb-0">
+                            <strong>{{ appointment.appointment_date.strftime('%d %b %Y') }}</strong><br>
+                            <small>{{ appointment.appointment_time.strftime('%I:%M %p') }}</small>
+                        </p>
+                    </div>
+
+                    <hr>
+
+                    <a href="{{ url_for('doctor.patient_history', patient_id=appointment.patient.id) }}"
+                       class="btn btn-sm btn-outline-info w-100">
+                        <i class="bi bi-clock-history"></i> View History
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Treatment Form -->
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('doctor.complete_appointment', appointment_id=appointment.id) }}" novalidate>
+                        <div class="row">
+                            <!-- Diagnosis -->
+                            <div class="col-12 mb-4">
+                                <label for="diagnosis" class="form-label">
+                                    <i class="bi bi-activity text-danger"></i> Diagnosis <span class="text-danger">*</span>
+                                </label>
+                                <textarea class="form-control"
+                                          id="diagnosis"
+                                          name="diagnosis"
+                                          rows="3"
+                                          placeholder="Enter patient's diagnosis..."
+                                          required>{{ form_data.diagnosis if form_data else '' }}</textarea>
+                                <small class="text-muted">Primary diagnosis and findings</small>
+                            </div>
+
+                            <!-- Prescription -->
+                            <div class="col-12 mb-4">
+                                <label for="prescription" class="form-label">
+                                    <i class="bi bi-capsule text-primary"></i> Prescription <span class="text-danger">*</span>
+                                </label>
+                                <textarea class="form-control"
+                                          id="prescription"
+                                          name="prescription"
+                                          rows="5"
+                                          placeholder="Enter medications, dosage, and instructions...&#10;&#10;Example:&#10;1. Tablet Name 500mg - Take 1 tablet twice daily after meals for 7 days&#10;2. Syrup Name 10ml - Take once at bedtime for 5 days"
+                                          required>{{ form_data.prescription if form_data else '' }}</textarea>
+                                <small class="text-muted">List all medications with dosage and instructions</small>
+                            </div>
+
+                            <!-- Additional Notes -->
+                            <div class="col-12 mb-4">
+                                <label for="notes" class="form-label">
+                                    <i class="bi bi-journal-text text-info"></i> Additional Notes <small class="text-muted">(Optional)</small>
+                                </label>
+                                <textarea class="form-control"
+                                          id="notes"
+                                          name="notes"
+                                          rows="3"
+                                          placeholder="Any additional recommendations, follow-up instructions, or observations...">{{ form_data.notes if form_data else '' }}</textarea>
+                                <small class="text-muted">Follow-up instructions, dietary restrictions, precautions, etc.</small>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="col-12">
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-success btn-lg">
+                                        <i class="bi bi-check-circle"></i> Complete & Save Treatment
+                                    </button>
+                                    <a href="{{ url_for('doctor.view_appointment', appointment_id=appointment.id) }}"
+                                       class="btn btn-outline-secondary btn-lg">
+                                        <i class="bi bi-x-circle"></i> Cancel
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Help Text -->
+            <div class="alert alert-info mt-3">
+                <h6 class="alert-heading"><i class="bi bi-info-circle"></i> Important</h6>
+                <ul class="mb-0 small">
+                    <li>Ensure all diagnosis and prescription details are accurate</li>
+                    <li>Include clear dosage instructions for medications</li>
+                    <li>Mention any follow-up consultations required</li>
+                    <li>This information will be available to the patient</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

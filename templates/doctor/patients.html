@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}My Patients - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-6 fw-bold">
+                <i class="bi bi-people text-success"></i> My Patients
+            </h1>
+            <p class="text-muted">All patients you have treated</p>
+        </div>
+    </div>
+
+    <!-- Search -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <form method="GET" action="{{ url_for('doctor.view_patients') }}" class="row g-3">
+                        <div class="col-md-8">
+                            <div class="search-box">
+                                <i class="bi bi-search"></i>
+                                <input type="text"
+                                       class="form-control"
+                                       name="search"
+                                       placeholder="Search by patient name..."
+                                       value="{{ request.args.get('search', '') }}">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-search"></i> Search
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Patients List -->
+    <div class="row">
+        {% if patients %}
+            {% for patient in patients %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm hover-lift">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="avatar-large me-3">
+                                {{ patient.name[0] }}
+                            </div>
+                            <div class="flex-grow-1">
+                                <h5 class="mb-1">{{ patient.name }}</h5>
+                                <p class="text-muted small mb-0">ID: #{{ patient.id }}</p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <small class="text-muted">Age / Gender</small>
+                                <p class="mb-0"><strong>{{ patient.age }} / {{ patient.gender }}</strong></p>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">Blood Group</small>
+                                <p class="mb-0"><span class="badge bg-danger">{{ patient.blood_group }}</span></p>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <small class="text-muted">Contact</small>
+                            <p class="mb-0"><i class="bi bi-telephone"></i> {{ patient.contact_number }}</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <small class="text-muted">Total Visits</small>
+                            <p class="mb-0">
+                                <strong>{{ patient.appointment_count }}</strong> appointment(s)
+                            </p>
+                        </div>
+
+                        <a href="{{ url_for('doctor.patient_history', patient_id=patient.id) }}"
+                           class="btn btn-outline-primary w-100">
+                            <i class="bi bi-clock-history"></i> View History
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="empty-state py-5">
+                    <i class="bi bi-people"></i>
+                    <h5>No Patients Found</h5>
+                    <p class="text-muted">You haven't treated any patients yet</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if patients %}
+    <div class="row mt-3">
+        <div class="col-12">
+            <p class="text-muted text-center">
+                Showing {{ patients|length }} patient(s)
+            </p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

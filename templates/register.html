@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Hospital Management System{% endblock %}
+
+{% block content %}
+<section class="register-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-7">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-body p-5">
+                        <!-- Header -->
+                        <div class="text-center mb-4">
+                            <div class="mb-3">
+                                <i class="bi bi-person-plus text-primary" style="font-size: 3rem;"></i>
+                            </div>
+                            <h2 class="fw-bold">Create Account</h2>
+                            <p class="text-muted">Register as a new patient</p>
+                        </div>
+
+                        <!-- Registration Form -->
+                        <form method="POST" action="{{ url_for('auth.register') }}" novalidate>
+                            <div class="row">
+                                <!-- Account Information -->
+                                <div class="col-12">
+                                    <h5 class="mb-3">
+                                        <i class="bi bi-key text-primary"></i> Account Information
+                                    </h5>
+                                </div>
+
+                                <!-- Username -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="username" class="form-label">
+                                        Username <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="username"
+                                           name="username"
+                                           value="{{ form_data.username if form_data else '' }}"
+                                           placeholder="Choose a username"
+                                           required
+                                           minlength="3">
+                                    <small class="text-muted">Minimum 3 characters</small>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">
+                                        Email <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="email"
+                                           class="form-control"
+                                           id="email"
+                                           name="email"
+                                           value="{{ form_data.email if form_data else '' }}"
+                                           placeholder="your.email@example.com"
+                                           required>
+                                </div>
+
+                                <!-- Password -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="password" class="form-label">
+                                        Password <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="password"
+                                           class="form-control"
+                                           id="password"
+                                           name="password"
+                                           placeholder="Create a password"
+                                           required
+                                           minlength="6">
+                                    <small class="text-muted">Minimum 6 characters</small>
+                                </div>
+
+                                <!-- Confirm Password -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="confirm_password" class="form-label">
+                                        Confirm Password <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="password"
+                                           class="form-control"
+                                           id="confirm_password"
+                                           name="confirm_password"
+                                           placeholder="Confirm your password"
+                                           required>
+                                </div>
+
+                                <div class="col-12"><hr class="my-3"></div>
+
+                                <!-- Personal Information -->
+                                <div class="col-12">
+                                    <h5 class="mb-3">
+                                        <i class="bi bi-person text-primary"></i> Personal Information
+                                    </h5>
+                                </div>
+
+                                <!-- Full Name -->
+                                <div class="col-12 mb-3">
+                                    <label for="name" class="form-label">
+                                        Full Name <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="name"
+                                           name="name"
+                                           value="{{ form_data.name if form_data else '' }}"
+                                           placeholder="Enter your full name"
+                                           required>
+                                </div>
+
+                                <!-- Date of Birth -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="date_of_birth" class="form-label">
+                                        Date of Birth
+                                    </label>
+                                    <input type="date"
+                                           class="form-control"
+                                           id="date_of_birth"
+                                           name="date_of_birth"
+                                           value="{{ form_data.date_of_birth if form_data else '' }}"
+                                           max="{{ today }}">
+                                </div>
+
+                                <!-- Gender -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="gender" class="form-label">Gender</label>
+                                    <select class="form-select" id="gender" name="gender">
+                                        <option value="">Select Gender</option>
+                                        <option value="Male" {% if form_data and form_data.gender == 'Male' %}selected{% endif %}>Male</option>
+                                        <option value="Female" {% if form_data and form_data.gender == 'Female' %}selected{% endif %}>Female</option>
+                                        <option value="Other" {% if form_data and form_data.gender == 'Other' %}selected{% endif %}>Other</option>
+                                    </select>
+                                </div>
+
+                                <!-- Contact Number -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="contact_number" class="form-label">
+                                        Contact Number <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="tel"
+                                           class="form-control"
+                                           id="contact_number"
+                                           name="contact_number"
+                                           value="{{ form_data.contact_number if form_data else '' }}"
+                                           placeholder="10-digit phone number"
+                                           pattern="[0-9]{10}"
+                                           required>
+                                </div>
+
+                                <!-- Blood Group -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="blood_group" class="form-label">Blood Group</label>
+                                    <select class="form-select" id="blood_group" name="blood_group">
+                                        <option value="">Select Blood Group</option>
+                                        <option value="A+" {% if form_data and form_data.blood_group == 'A+' %}selected{% endif %}>A+</option>
+                                        <option value="A-" {% if form_data and form_data.blood_group == 'A-' %}selected{% endif %}>A-</option>
+                                        <option value="B+" {% if form_data and form_data.blood_group == 'B+' %}selected{% endif %}>B+</option>
+                                        <option value="B-" {% if form_data and form_data.blood_group == 'B-' %}selected{% endif %}>B-</option>
+                                        <option value="AB+" {% if form_data and form_data.blood_group == 'AB+' %}selected{% endif %}>AB+</option>
+                                        <option value="AB-" {% if form_data and form_data.blood_group == 'AB-' %}selected{% endif %}>AB-</option>
+                                        <option value="O+" {% if form_data and form_data.blood_group == 'O+' %}selected{% endif %}>O+</option>
+                                        <option value="O-" {% if form_data and form_data.blood_group == 'O-' %}selected{% endif %}>O-</option>
+                                    </select>
+                                </div>
+
+                                <!-- Address -->
+                                <div class="col-12 mb-3">
+                                    <label for="address" class="form-label">Address</label>
+                                    <textarea class="form-control"
+                                              id="address"
+                                              name="address"
+                                              rows="2"
+                                              placeholder="Enter your residential address">{{ form_data.address if form_data else '' }}</textarea>
+                                </div>
+
+                                <!-- Emergency Contact -->
+                                <div class="col-12 mb-3">
+                                    <label for="emergency_contact" class="form-label">
+                                        Emergency Contact Number
+                                    </label>
+                                    <input type="tel"
+                                           class="form-control"
+                                           id="emergency_contact"
+                                           name="emergency_contact"
+                                           value="{{ form_data.emergency_contact if form_data else '' }}"
+                                           placeholder="Emergency contact (10 digits)"
+                                           pattern="[0-9]{10}">
+                                </div>
+
+                                <!-- Terms and Conditions -->
+                                <div class="col-12 mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               id="terms"
+                                               required>
+                                        <label class="form-check-label" for="terms">
+                                            I agree to the <a href="#" class="text-decoration-none">Terms and Conditions</a>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="col-12">
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary btn-lg">
+                                            <i class="bi bi-person-plus"></i> Register
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Login Link -->
+                        <div class="text-center mt-4">
+                            <p class="mb-0">
+                                Already have an account?
+                                <a href="{{ url_for('auth.login') }}" class="text-decoration-none fw-bold">
+                                    Login here
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .register-section {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 3rem 0;
+    }
+
+    .card {
+        animation: fadeInUp 0.6s ease;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+        border-color: #667eea;
+    }
+
+    .text-danger {
+        font-weight: bold;
+    }
+</style>
+
+{% block extra_js %}
+<script>
+    // Password confirmation validation
+    document.getElementById('confirm_password').addEventListener('input', function() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = this.value;
+
+        if (password !== confirmPassword) {
+            this.setCustomValidity('Passwords do not match');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

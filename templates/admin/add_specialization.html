@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Add Specialization - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin.manage_specializations') }}">Specializations</a></li>
+                    <li class="breadcrumb-item active">Add Specialization</li>
+                </ol>
+            </nav>
+            <h1 class="display-6 fw-bold">
+                <i class="bi bi-plus-circle text-primary"></i> Add New Specialization
+            </h1>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('admin.add_specialization') }}" novalidate>
+                        <!-- Specialization Name -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">
+                                Specialization Name <span class="text-danger">*</span>
+                            </label>
+                            <input type="text"
+                                   class="form-control form-control-lg"
+                                   id="name"
+                                   name="name"
+                                   value="{{ form_data.name if form_data else '' }}"
+                                   placeholder="e.g., Cardiology, Neurology"
+                                   required>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <label for="description" class="form-label">
+                                Description <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control"
+                                      id="description"
+                                      name="description"
+                                      rows="4"
+                                      placeholder="Brief description of the specialization..."
+                                      required>{{ form_data.description if form_data else '' }}</textarea>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle"></i> Add Specialization
+                            </button>
+                            <a href="{{ url_for('admin.manage_specializations') }}" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
