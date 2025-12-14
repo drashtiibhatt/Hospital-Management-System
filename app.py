@@ -130,7 +130,9 @@ def create_app(config_name=None):
         }
 
     return app
-
+    
+# This makes Vercel happy because it can find a global variable named `app`
+app = create_app(os.environ.get("FLASK_ENV", "production"))
 
 if __name__ == '__main__':
     """
@@ -147,11 +149,11 @@ if __name__ == '__main__':
     print(f"\n{'='*60}")
     print(f"Hospital Management System Starting...")
     print(f"Environment: {os.environ.get('FLASK_ENV', 'development')}")
-    print(f"Running on: http://127.0.0.1:{port}/")
+    print(f"Running on: http://0.0.0.0:{port}/")
     print(f"{'='*60}\n")
 
     app.run(
-        host='127.0.0.1',
+        host='0.0.0.0',
         port=port,
-        debug=app.config['DEBUG']
+        debug=app.config["DEBUG", False]
     )
