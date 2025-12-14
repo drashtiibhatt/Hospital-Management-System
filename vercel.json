@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "vercel_entry.py",  // This points to your new entry point file
+      "src": "vercel_entry.py", 
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/vercel_entry.py"  // This ensures all requests go to vercel_entry.py
+      "dest": "/vercel_entry.py" 
     }
   ]
 }
