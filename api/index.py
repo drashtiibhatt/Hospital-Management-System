@@ -1,4 +1,4 @@
+import os
 from app import create_app
 
-# Vercel needs a top-level variable named `app` or `handler`
-app = create_app("production")
+app = create_app(os.environ.get("FLASK_ENV", "production"))
