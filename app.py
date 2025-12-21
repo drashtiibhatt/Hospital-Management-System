@@ -39,13 +39,20 @@ def create_app(config_name=None):
     login_manager.login_message_category = 'info'
 
     # Import models (needed for database creation)
-    with app.app_context():
-        from models import user, admin, doctor, patient, specialization, appointment, treatment
-
+    # with app.app_context():
+    #   from models import user, admin, doctor, patient, specialization, appointment, treatment
         # Create database tables
-        db.create_all()
+     #   db.create_all()
 
         # Initialize database with default data
+      #  from utils.database import init_db
+       # init_db(db, bcrypt)
+    with app.app_context():
+    from models import user, admin, doctor, patient, specialization, appointment, treatment
+
+    # Never auto-create/seed DB on Vercel import
+    if os.environ.get("INIT_DB") == "true":
+        db.create_all()
         from utils.database import init_db
         init_db(db, bcrypt)
 
@@ -155,5 +162,5 @@ if __name__ == '__main__':
     app.run(
         host='0.0.0.0',
         port=port,
-        debug=app.config["DEBUG", False]
+        debug=app.config.get["DEBUG", False]
     )
