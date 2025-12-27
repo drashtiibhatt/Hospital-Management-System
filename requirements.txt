@@ -24,7 +24,7 @@ Flask-RESTful==0.3.10
 # Optional: CORS Support (if needed for API)
 Flask-CORS==4.0.0
 
-gunicorn
+gunicorn==21.2.0
 
 
 # Development Tools
